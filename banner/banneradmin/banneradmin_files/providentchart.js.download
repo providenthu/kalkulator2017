@@ -1,0 +1,185 @@
+﻿define(['jquery', 'helper', 'chart'], function ($, helper) {
+    var xy;
+    var chartSize;
+    var innerCutOut = 57; //70 volt
+    var fontsize = 0;
+
+    Chart.types.Doughnut.extend({
+        name: "pd",
+        draw: function (data) {            
+            //var c = document.getElementById("chart-area");
+            //var ctx = c.getContext("2d");
+            //var img = new Image();
+            //img.onload = function () {
+            //    ctx.drawImage(img, c.width / 2, c.height / 2);
+            //}
+            //img.src = "../../content/images/women_big.png";
+
+            //tooltippek szövege
+            this.segments.forEach(function (elem) {
+                elem.fvalue = helper.formatMoney(elem.value) + (elem.extraText || "");
+            });
+
+            //0.8-ad (helyett 0.7-ed) részét foglalja el a chart a canvasnak
+            this.outerRadius = chartSize = this.chart.height / 2 * 0.8;
+            Chart.types.Doughnut.prototype.draw.apply(this, arguments);
+
+            //középre írás
+            if (this.extraText) {
+                writeTextToDoughnutMiddle(this.extraText.total, this.extraText.period);
+            }
+        },
+        update: function (data) {
+            if ($(data.chart.chart.ctx.canvas).is(':visible')) {
+                data.isOverlayVisible(false);
+                //animáció kikapcsolása
+                data.chart.options.animation = false;
+
+                //data.chart.segments.forEach(function (elem) {
+                //    if (elem.label.indexOf("Kölcsön") >= 0) {
+                //        elem.extraText = " / " + data.periodFormatted();
+                //    }
+                //}); Viki
+
+                Chart.types.Doughnut.prototype.update.apply(this, arguments);
+
+                if (jQuery._data(window).events.click) {
+                    delete jQuery._data(window).events.click;
+                }
+            }
+        }
+    });
+
+    var defaultData = [
+            {
+                //value: 0,
+                //color: "#E414A8",
+                //label: "Kamat" Viki
+            },
+            {
+                //value: 0,
+                //color: "#C1C901",
+                //label: "Otthoni szolgáltatás díja" Viki
+            },
+            {
+                //value: 0,
+                //color: "#005BAA",
+                //label: "Kölcsön összege" Viki
+            }];
+
+    // személyre szabott tooltip, vonalak, kérdőjel ikonok stb
+    function customTooltips(tooltip) {
+        if (!tooltip || tooltip.segment.value == 0)
+            return;
+
+        var segment = tooltip.segment;
+        var ctx = tooltip.chart.ctx;
+        var _x = ctx.canvas.offsetWidth/ 2; //kör közepe x koordináta
+        var _y = ctx.canvas.offsetHeight / 2;   //kör közepe y koordináta
+        var f = tooltip.chart.canvas.offsetHeight / 16 * 0.65; //chartSize / 8;
+        ctx.font = f + "px Arial";
+        var alfa = segment.startAngle + (segment.endAngle - segment.startAngle) / 2 - 0.5 * Math.PI; //tooltiphez tartozó körszelet szöge
+        var r = segment.innerRadius + (segment.outerRadius - segment.innerRadius) / 2; // sugár: a chart közepétől a tooltip vonal elejéhez tartozó fehér pötty középpontjáig
+        ctx.beginPath();
+        ctx.moveTo(_x - r * Math.sin(alfa), _y + r * Math.cos(alfa)); //vonal a fehér pötty közepétől
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#000000";
+        ctx.fillStyle = "#000000";
+        var text = tooltip.text.split(':')[0] + ":"; //tooltip szöveg rész
+        var value = tooltip.text.split(':')[1]; //tooltip szám / érték rész
+        var textlen = ctx.measureText(text).width; //szöveg hossza
+        var valuelen = ctx.measureText(value).width; //érték hossza
+        var s = Math.max(textlen, valuelen); //kettő közül a hosszabb
+
+        if (tooltip.text.indexOf("Kamat") > -1) {
+            ctx.lineTo(_x * 2 - s, f * 3); //vonal fehér pöttytől a Kamat feliratig
+            ctx.stroke();
+        } else if (tooltip.text.indexOf("Otthon") > -1 && tooltip.segment.value > 0) {
+            ctx.lineTo(_x * 2 - s / 2, _y * 2 - f * 3); //vonal fehér pöttytől az Otthon feliratig, ha van
+            ctx.stroke();
+        } else if (tooltip.text.indexOf("Kölcsön") > -1) { 
+            ctx.lineTo(0 + s / 2, _y * 2 - f * 3); //vonal fehér pöttytől a Kölcsön feliratig
+            ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.fillStyle = "#ffffff";
+        ctx.arc(_x - r * Math.sin(alfa), _y + r * Math.cos(alfa), chartSize / 20, 0, 2 * Math.PI); //a fehér pötty
+        ctx.fill();
+    }
+
+    function writeTextToDoughnutMiddle(cost, time) { //szöveg írása a chart közepébe
+        var canvas = $("#chart-area");
+        var ctx = canvas[0].getContext("2d");
+        var height = canvas.height();
+        var width = canvas.width();
+        var origFont = ctx.font; //eredeti context beállítások eltárolása
+        var origTextAlign = ctx.textAlign;
+        var origTextBaseline = ctx.textBaseline;
+        
+        //----ChartJS
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        //-----
+
+        //----Math
+        /*
+         * Meg kell keresni a lehető legnagyobb betűméretet, amit használva a szöveg még nem lóg bele a chart szélébe.
+         * window.resizenál újraszámolódik, így responsive
+         */
+        var fontsize = 1;
+        var r = height * (innerCutOut / 100); 					//belső kör sugara
+        var h = fontsize / 2;										//szöveg magasság fele
+        var x = Math.sqrt(Math.pow(r, 2) - Math.pow(h, 2)); 	// a szöveg tetejénél a kör szélessége
+        ctx.font = fontsize + "px Arial";						// betűtípus beállítása
+        var measuredLength = ctx.measureText(cost).width;		// szöveg méret becslés
+        while (measuredLength < x * (innerCutOut / 100) * 0.8) {		//amíg becslés szerint nem lóg bele a körbe
+            fontsize++;											//növeljük a betűméretet majd újra becslünk
+            h = fontsize / 2;
+            x = Math.sqrt(Math.pow(r, 2) - Math.pow(h, 2));
+            ctx.font = fontsize + "px Arial";
+            measuredLength = ctx.measureText(cost.substr(0, cost.length - 3)).width;
+        }
+        ctx.font = origFont; //context beállítások visszaállítása
+        ctx.textAlign = origTextAlign;
+        ctx.textBaseline = origTextBaseline;
+    }
+
+    var options = {
+        animation: true,
+        maintainAspectRatio: true,
+        percentageInnerCutout: innerCutOut,
+        responsive: true,
+        showTooltips: false,
+
+        onAnimationComplete: function () {
+            $(this.chart.canvas).trigger("drawOverlay");
+            this.showTooltip(this.segments, true);
+        },
+        tooltipEvents: [],
+        tooltipTemplate: "<% if (label){ %><%=label%>: <%}%><%= (fvalue) %>",
+
+        customTooltips: customTooltips
+    };
+
+    function createChart(chartCanvasId, canvasWidth, canvasHeight) {
+        $('.request-button-container-chart').localScroll({ hash: true, offset: { top: 0 }, duration: 800, easing: 'easeInOutExpo' });
+
+        $(".request-button-chart").click(function () {
+            $('#formsTab a:first').tab('show');
+            $('#request-datas').show(0);
+        });
+
+        var ctx = $("#" + chartCanvasId)[0].getContext("2d");
+
+        ctx.canvas.width = canvasWidth;
+        ctx.canvas.height = canvasHeight;
+        //$(window).mousemove(handleMouseMove);
+        return new Chart(ctx).pd(defaultData, options);
+    }
+
+    return {
+        createChart: createChart
+    }
+
+
+});

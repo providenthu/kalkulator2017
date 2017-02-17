@@ -1,0 +1,22 @@
+﻿define(['knockout', 'providentCalculator', 'calculatorData'], function (ko, providentCalculator, calculatorData) {
+    function calculatorToolDataViewModel(params, componentInfo) {
+
+        providentCalculator.initDOM(params.vm);
+
+        this.vm = params.vm;
+
+        this.showMinimalForm = function () {
+            providentCalculator.showMinimalForm();
+            calculatorData.updateByIssueValue(this.vm, this.vm.issueValue(), "inc");
+        };
+
+        this.showRequestForm = function () {
+            providentCalculator.showRequestForm();
+            calculatorData.updateByIssueValue(this.vm, this.vm.issueValue(), "inc");
+        };
+
+        return this;
+    }
+
+    return { createViewModel: calculatorToolDataViewModel };
+});

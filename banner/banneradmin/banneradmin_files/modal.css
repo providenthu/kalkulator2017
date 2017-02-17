@@ -1,0 +1,95 @@
+﻿
+.modal-content {
+    background-color: #ededed;
+    color: #000000;
+    padding: 25px 35px 35px 30px;
+}
+
+.modal-header {
+    border-bottom: 0;
+}
+
+.modal-header .modal-title {
+    font-size: 30px;
+    font-weight: bold;
+    color: #00ACE9;
+}
+
+.modal-body p {
+    padding-top: 10px;
+}
+
+.modal-body a {
+    /*color: #ffffff;*/
+    text-decoration: underline;
+}
+
+.modal-footer {
+    border-top: 0;
+}
+
+.modal-footer > .btn {
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 30px;
+    min-width: 130px;
+}
+
+.modal-footer > .btn.btn-default {
+    border-color: #00ACE9;
+    background-color: #00ACE9;
+    /*width: 30%;
+    font-size: 12px;*/
+}
+
+.modal-footer > .btn.btn-primary {
+    border-color: #C10F81;
+    background-color: #C10F81;
+    /*padding: 15px 0 15px 0;*/
+    /*width: 30%;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;*/
+}
+
+
+
+@media (max-width: 991px) {
+
+    .modal-content {
+        padding: 10px 7px 15px 7px;
+    }
+
+    .modal-header {
+        padding: 0;
+    }
+
+    .modal-header .modal-title {
+        font-size: 20px;
+    }
+
+    .modal-footer {
+        padding: 0;
+    }
+
+    .modal-footer > .btn {
+        font-size: 13px;
+        padding: 8px 15px;
+        min-width: 80px;
+    }
+
+    .modal-footer > #modalSuccess,
+    .modal-footer > #modalCancel {
+        margin-top: 5px;
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 767px) {
+
+    .modal-footer > .btn {
+        white-space: normal;
+    }
+}

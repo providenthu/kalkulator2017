@@ -1,0 +1,59 @@
+﻿define(['knockout', 'calculatorData', 'bootstrap-checkbox'], function (ko, calculatorData) {
+    ko.bindingHandlers.hsCheckbox = {
+        init: function (element, valueAccessor, allBindings) {
+            var options = allBindings.get('checkboxOptions') || {};
+
+            $(element).checkbox(options);
+
+            var viewModel = allBindings.get('calculatorDataViewModel');
+            var sliderId = "#" + allBindings.get('sliderId');
+
+            if (viewModel.productTypeCB()) {
+                $(element).checkbox("setChecked", true);
+            }
+
+            $(element).on('change', function () {
+                if (this.checked) {
+                    $('#package-icon').css('background-position', '0px -32px');
+                    viewModel.productType('HS');
+                    var protPackage = viewModel.protPackage();
+                    if (protPackage) {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRateHSPP, viewModel.sliderOptions.maxRegularRateHSPP,
+                            viewModel.sliderOptions.regularRateHSPPTicks, viewModel.sliderOptions.regularRateHSPPTickPositions);
+                    } else {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRateHS, viewModel.sliderOptions.maxRegularRateHS,
+                            viewModel.sliderOptions.regularRateHSTicks, viewModel.sliderOptions.regularRateHSTickPositions);
+                    }
+                } else {
+                    $('#package-icon').css('background-position', '0px 5px');
+                    viewModel.productType('MT');
+                    if (protPackage) {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRatePP, viewModel.sliderOptions.maxRegularRatePP,
+                            viewModel.sliderOptions.regularRateMTPPTicks, viewModel.sliderOptions.regularRateMTPPTickPositions);
+                    } else {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRate, viewModel.sliderOptions.maxRegularRate,
+                            viewModel.sliderOptions.regularRateMTTicks, viewModel.sliderOptions.regularRateMTTickPositions);
+                    }
+                }
+
+                var boundValue = {
+                    period: viewModel.period(),
+                    frequency: viewModel.frequency()
+                };
+
+                calculatorData.calculateBoundValue("period", boundValue, viewModel);
+            });
+
+
+            function refreshSlider(sliderId, min, max, ticks, ticksPositions) {
+                $(sliderId).slider("setAttribute", "min", min);
+                $(sliderId).slider("setAttribute", "max", max);
+                $(sliderId).slider("setAttribute", "ticks", ticks);
+                $(sliderId).slider("setAttribute", "ticks_positions", ticksPositions);
+                // refresh double value bug workaround
+                $(sliderId).slider("setAttribute", "value", $(sliderId).slider("getValue"));
+                $(sliderId).slider("refresh");
+            }
+        }
+    }
+});

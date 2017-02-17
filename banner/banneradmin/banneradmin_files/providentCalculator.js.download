@@ -1,0 +1,166 @@
+﻿define(['jquery', 'calculatorData', 'factory'], function ($, calculatorData, factory) {
+
+    return {
+        initDOM: initDOM,
+        showMinimalForm: showMinimalForm,
+        showRequestForm: showRequestForm
+    }
+
+    function initDOM() {
+        $('.request-button-container').localScroll({ hash: true, offset: { top: 0 }, duration: 800, easing: 'easeInOutExpo' });
+
+        $('#hsQuestionSignLink-container').localScroll({ hash: true, offset: { top: 0 }, duration: 800, easing: 'easeInOutExpo' });
+
+        //$('#hsQuestionSignLink').localScroll({ hash: true, offset: { top: 0 }, duration: 800, easing: 'easeInOutExpo' });
+
+        //result panel
+        $('.request-button-container-chart').localScroll({ hash: true, offset: { top: 0 }, duration: 800, easing: 'easeInOutExpo' });
+
+        $('#thmInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'THM',
+                message: 'Teljes Hiteldíj Mutató, melynek rendeltetése, hogy nemcsak a kamatot, hanem az összes felmerülő díjat figyelembe véve mutassa meg a fogyasztónak mennyibe kerül a hitele. Annak ellenére, hogy a THM értékét százalékban fejezik ki, ez a százalék nem azonos az eredetileg felvett kölcsön összege után fizetendő kamattal.',
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#interestInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Kamat',
+                message: 'Az adott kölcsön futamidejére vonatkozó teljes rögzített kamat összege forintban.',
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#loanInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Kölcsön összege',
+                message: 'Az Ön által választott kölcsönösszeg nagysága forintban.',
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#ppInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Előrelátó csomag info',
+                message: "Lorem ipsum dolor sit amet, no accumsan percipitur eam, mei ea alii nobis cetero, hinc iisque accusata et pri. Ei autem facete scripserit eam, vel ne esse audiam, sit ad habeo noster assentior. Diam partem adipiscing id his, ei pro persius honestatis. Eos ne purto atomorum scripserit.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#hsInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Otthoni szolgáltatás díja',
+                message: "Az otthoni szolgáltatás választása esetén képviselőnk személyesen adja át a kölcsönt készpénzben, az ügyfél otthonában. Az esedékes törlesztőrészleteket befizetése úgyszintén személyesen otthon, készpénzben történik.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#hsInfoQuestionSign1').on('click', function () {
+            factory.createModal({
+                title: 'Otthoni Szolgáltatás',
+                message: "coming soon",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#hsInfoQuestionSign2').on('click', function () {
+            factory.createModal({
+                title: 'Otthoni Szolgáltatás teljes díja',
+                message: "Az Otthoni Szolgáltatás választása esetén képviselőnk személyesen adja át a kölcsönt készpénzben, az ügyfél otthonában. Az esedékes törlesztőrészleteket befizetése úgyszintén személyesen otthon, készpénzben történik.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+
+        $('#tapInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Teljes visszafizetendő összeg',
+                message: "A kölcsön teljes futamideje alatt visszafizetett teljes összeg, azaz a törlesztőrészletek összege forintban.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#installmentInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Törlesztőrészlet',
+                message: "A felvett kölcsön után hetente vagy havonta fizetendő kamat, díjak és tőketörlesztés együttes összege.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#durationInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Futamidő',
+                message: "A kölcsön futamideje azt az időszakot jelenti, amely alatt a kölcsön összegét heti vagy havi részletekben a hitelfelvevő visszafizeti, vagyis a kölcsön felvétele és lejárata között eltelt idő.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('.calculator #hsInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Otthoni szolgáltatás info',
+                message: "Lorem ipsum dolor sit amet, no accumsan percipitur eam, mei ea alii nobis cetero, hinc iisque accusata et pri. Ei autem facete scripserit eam, vel ne esse audiam, sit ad habeo noster assentior. Diam partem adipiscing id his, ei pro persius honestatis. Eos ne purto atomorum scripserit.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('.calculator #ppInfoQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Előrelátó csomag info',
+                message: "Lorem ipsum dolor sit amet, no accumsan percipitur eam, mei ea alii nobis cetero, hinc iisque accusata et pri. Ei autem facete scripserit eam, vel ne esse audiam, sit ad habeo noster assentior. Diam partem adipiscing id his, ei pro persius honestatis. Eos ne purto atomorum scripserit.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#finalRateQuestionSign').on('click', function () {
+            factory.createModal({
+                title: 'Utolsó törlesztőrészlet',
+                message: 'A felvett kölcsön után az utolsó fizetendő kamat, díjak és tőketörlesztés együttes összege.',
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#ppInfoQuestionSign1').on('click', function () {
+            factory.createModal({
+                title: 'Előrelátó Csomag',
+                message: "Az Előrelátó Csomag választása esetén a Provident elengedi az ügyfélnek a halála napján fennálló tartozását, az ügyfél a kölcsönszerződéstől 30 napon belül díjmentesen elállhat, illetve felmondhatja azt, illetve a Csomag tartalmaz egy ügyfélre vonatkozó csoportos élet- és balesetbiztosítást is.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        $('#ppInfoQuestionSign2').on('click', function () {
+            factory.createModal({
+                title: 'Előrelátó Csomag díja',
+                message: "Az Előrelátó Csomag választása esetén a Provident elengedi az ügyfélnek a halála napján fennálló tartozását, az ügyfél a kölcsönszerződéstől 30 napon belül díjmentesen elállhat, illetve felmondhatja azt, illetve a Csomag tartalmaz egy ügyfélre vonatkozó csoportos élet- és balesetbiztosítást is.",
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+    }
+
+    function showMinimalForm() {
+        $('#formsTab a:last').tab('show');
+        $('#request-datas').show();
+    }
+
+    function showRequestForm() {
+        $('#formsTab a:first').tab('show');
+        $('#request-datas').show();
+    }
+});

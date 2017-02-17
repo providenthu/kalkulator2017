@@ -1,0 +1,330 @@
+﻿define(['jquery', 'helper', 'constants', 'factory', 'numeric', 'bootstrap-checkbox', 'kendo/kendo.datepicker', 'kendoCultureHU', 'validator', 'domReady!'], function ($, helper, constants, factory) {
+
+    var self = this;
+
+    self.initDOM = function () {
+        $('form').removeData('validator');
+
+        $.validator.unobtrusive.parse(document);
+
+        $('#check1Detailed').checkbox({});
+        $('#check2Detailed').checkbox({});
+        $('#check3Detailed').checkbox({});
+        $('#check4Detailed').checkbox({});
+
+        //$('#HasLoanQuestion').checkbox({});
+
+        $('#check1Minimal').checkbox({});
+        $('#check2Minimal').checkbox({});
+
+        $('.numeric').numeric({ decimal: false, negative: false });
+
+        kendo.culture('hu-HU');
+
+        $("#leadFormMinimal").validate();
+
+        $("#leadFormDetailed").validate();
+
+        $('#datepicker').rules('add', { mindate: new Date(1900, 0, 1) });
+        $('#datepicker').rules('add', { maxdate: new Date() });
+
+        $('#datepicker').kendoDatePicker({
+            format: 'yyyy.MM.dd.',
+            parseFormats: ['yyyy.MM.dd', 'yyyy.MM.dd.'],
+            min: new Date(1900, 0, 1),
+            max: new Date(),
+            start: 'century',
+            change: function () {
+                $('span.k-widget.k-datepicker.k-header').parent().removeClass('has-error inner-addon right-addon');
+            }
+        });
+
+        $('.pn-area').on('keyup', function (elem) {
+            var target = elem.target;
+            var value = target.value;
+            if (value.length == 2 || value == '1') {
+                var next = $(target).next();
+                next.focus();
+            }
+        });
+
+        $('#leadFormMinimal input[type="text"], #leadFormDetailed input[type="text"]').on('input', function () {
+            var element = $(this);
+            setTimeout(function () {
+                if (element.parent().hasClass('phone-number-area-input')) {
+                    if ($(element.parent().parent()).find('span.field-validation-error').length < 1) {
+                        element.parent().parent().find('.fonta').remove();
+                        element.removeClass('has-error inner-addon right-addon');
+                        element.parent().parent().removeClass('has-error inner-addon right-addon');
+                    }
+                }
+                if ($(element.parent()).find('span.field-validation-error').length < 1) {
+                    element.parent().find('.fonta').remove();
+                    element.removeClass('has-error inner-addon right-addon');
+                    element.parent().removeClass('has-error inner-addon right-addon');
+                    if (element[0].id == 'datepicker') {
+                        $('span.k-widget.k-datepicker.k-header').parent().removeClass('has-error inner-addon right-addon');
+                    }
+                }
+            }, 200);
+        });
+
+        //$('#monthlySalaryInfo').tooltip();
+        //$('#estateLoanInfo').tooltip();
+        //$('#carLoanInfo').tooltip();
+        //$('#personalLoanInfo').tooltip();
+        //$('#creditCardInfo').tooltip();
+        //$('#accountCreditLineInfo').tooltip();
+        //$('#miscLoanInfo').tooltip();
+
+        var minimalForm = helper.getParameterByName('utm_minimalForm');
+        if (minimalForm == 1) {
+            $('#formsTab a:last').tab('show');
+        }
+
+        var timeOutShown = 0;
+        function session() {
+            timeOutShown++;
+            factory.createModal({
+                title: 'Segíthetünk?',
+                oktext: 'Igen, visszahívást kérek',
+                canceltext: 'Köszönöm nem, folytatom a kalkulációt',
+                success: function () {
+                    $('#formsTab a:last').tab('show');
+                    $('html, body').animate({
+                        scrollTop: $('#hiteligenyles').offset().top + 'px'
+                    }, 'slow');
+                    clearTimeout(timeout);
+                },
+                cancel: function () {
+                    factory.hideModal();
+                    clearInterval(timeout);
+                    if (timeOutShown <= 1) {
+                        timeout = setTimeout(function () {
+                            session();
+                        }, constants.sessionTimeOut);
+                    }
+                }
+            });
+            factory.showModal();
+        }
+
+        var timeout = constants.sessionTimeOut == 0 ? null : setTimeout(function () {
+            session();
+        }, constants.sessionTimeOut);
+
+        $('.checkboxrow .info-link').on('click', function (event) {
+            event.preventDefault();
+            factory.createModal({
+                title: 'Tájékoztatás',
+                message: 'Adataim megadásával önkéntesen és a megfelelő tájékoztatás birtokában egyértelműen és kifejezetten hozzájárulok ahhoz, hogy a Provident Pénzügyi Zrt. a nevemet, a telefonszámomat, a címemet és az e-mail címemet a szolgáltatásáról történő tájékoztatás céljából, illetve marketing célból visszavonásomig kezelje, illetve e célokból a közvetlen megkeresés módszerével, így különösen elektronikus levelezés, telefonhívás, vagy ezzel egyenértékű más kommunikációs eszköz útján a részemre reklámot közöljön, marketing és tájékoztató anyagot küldjön. Tudomásul veszem, hogy a hozzájárulásomat bármikor térítésmentesen visszavonhatom, illetve térítésmentesen kérhetem az adataim módosítását vagy törlését írásban a Provident Pénzügyi Zrt.-nek küldött levélben (cím: 1134 Budapest, Angyalföldi út 6.), vagy e-mailen (provident@provident.hu) és telefonon (06 40 50 50 50).',
+                canceltext: 'OK'
+            });
+            factory.showModal();
+        });
+
+        //$('#DipQuestionSign').on('click', function () {
+        //    factory.createModal({
+        //        title: "Előzetes online hitelkalkuláció",
+        //        htmlMessage: "<p>Felhívjuk a figyelmét arra, hogy az előzetes kalkuláció eredménye kizárólag tájékoztató jellegű, az nem minősül ajánlatnak. A Provident a hitelbírálati eljárást minden esetben egyedileg, a kölcsönigény írásbeli rögzítését, a jövedelmet igazoló és egyéb dokumentumok ellenőrzését, valamint a hitelképességre vonatkozó adatok vizsgálatát követően folytatja le. Ennek megfelelően a jelen előzetes kalkuláció és az egyedi hitelbírálat eredménye egymástól eltérhet.<p>" +
+        //                    "<p>A kalkuláció a jövedelemarányos törlesztőrészlet és hitelfedezeti arányok szabályozásáról szóló 32/2014. (IX.10.) MNB rendelet alapján készül, amely minden, 2015. január 1. napját követően kötött új kölcsön esetében alkalmazni kell, kivéve a kétszázezer forintot meg nem haladó összegű hitelre, amennyiben az ügyfél a hitelkérelem elbírálásakor nem rendelkezik hiteltartozással olyan, a rendelet hatálybalépését követően (2015 január 1. után) igényelt hitelből eredően, amelynek eredeti hitelösszege nem haladta meg a kétszázezer forintot.</p>" +
+        //                    '<p>További részletes információt talál a <a href="https://www.provident.hu/fontos-tudnivalok-a-hitelfelvetellel-kapcsolatban/kolcsonfelvetel-elott/tajekoztato-jtm.aspx" target="_blank">jövedelemarányos törlesztőrészlet mutatóról</a> a linkre kattintva.</p>',
+        //        canceltext: "OK"
+        //    });
+        //    factory.showModal();
+        //});
+
+        //$('#monthlySalaryQuestionSign').on('click', function () {
+        //    factory.createModal({
+        //        title: "Havi nettó igazolt jövedelem ",
+        //        htmlMessage: "<p>Az Ön dokumentumokkal igazolható átlagos havi nettó jövedelme egy naptári hónapon belül.</p>" +
+        //                    "<p>Az igazolt nettó (kézhezvett) jövedelembe beleszámít: </p>" +
+        //                    "<ul><li>folyószámlára utalt munkabér,</li>" + 
+        //                    "<li>nyugdíj, továbbá,</li>" +  
+        //                    "<li>egyéb, a magyar vagy külföldi állam által folyósított rendszeres ellátás összege,</li>" +  
+        //                    "<li>házastársi tartásdíj,</li>" + 
+        //                    "<li>nyugdíjpénztári járadék.</li></ul>" + 
+        //                    "<p>Az igazolt jövedelembe NEM számíthatók bele a szociális jellegű kifizetések (pl. munkanélküli segély)</p>" +
+        //                    "<p>Az igazoló dokumentum lehet:</p>" + 
+        //                    "<ul><li>a munkáltatói igazolás,</li>" + 
+        //                    "<li>az állami adóhatóság, a magyar vagy valamely külföldi állam ellátást folyósító szerve által kiállított igazolás</li></ul>", 
+        //        canceltext: "OK"
+        //    });
+        //    factory.showModal();
+        //});
+
+        //$('#loanSumQuestionSign').on('click', function () {
+        //    factory.createModal({
+        //        title: "Hitelkötelezettség",
+        //        message: "Az összeg a megadott adatok alapján az Ön havi hitelkötelezettségét mutatja, amelyet a hitelképesség vizsgálatakor a bankok figyelembe vesznek.",
+        //        canceltext: "OK"
+        //    });
+        //    factory.showModal();
+        //});
+
+
+        //$('#loanSumQuestionSignSmall').on('click', function () {
+        //    factory.createModal({
+        //        title: "Hitelkötelezettség",
+        //        message: "Az összeg a megadott adatok alapján az Ön havi hitelkötelezettségét mutatja, amelyet a hitelképesség vizsgálatakor a bankok figyelembe vesznek.",
+        //        canceltext: "OK"
+        //    });
+        //    factory.showModal();
+        //});
+       
+
+        $(window).resize(_managePhoneGlyphicon);
+        //$('.versionB').hide();
+    }
+
+    self.isValidDetailed = function () {
+        var $form = $("#leadFormDetailed");
+
+        $form.validate();
+
+        if (!$form.valid()) {
+            _manageErrorFields($form);
+            $('html, body').animate({
+                scrollTop: $('#hiteligenyles').offset().top + 'px'
+            }, 'fast');
+            return false;
+        } else {
+            $form.find('div.form-group').each(function () {
+                $(this).removeClass('has-error inner-addon right-addon');
+                $(this).find('.fonta').remove();
+            });
+        }
+
+        if (_getAge() < 18) {
+            $('span.k-widget.k-datepicker.k-header').parent().addClass('has-error inner-addon right-addon');
+            //alert('A kölcsönigénylés alapfeltétele a 18. életév betöltése.');
+            factory.createModal({
+                title: "Figyelmeztetés",
+                message: "A kölcsönigénylés alapfeltétele a 18. életév betöltése.",
+                canceltext: "OK"
+            });
+            factory.showModal();
+            return false;
+        }
+
+        if (!isValidCheckbox("#check1Detailed", "A kölcsönigénylés alapfeltétele a rendszeres jövedelem (munkabér, nyugdíj stb.), és a bejelentett magyarországi lakcím.")) {
+            return false;
+        }
+
+        if (!isValidCheckbox("#check2Detailed", "Az igénylés feltétele, hogy érvényes személyazonosságot igazoló dokumentummal rendelkezzen. Szükséges dokumentumok: személyi igazolvány és lakcímkártya vagy útlevél.")) {
+            return false;
+        }
+
+        if (!isValidCheckbox("#check3Detailed", "Az igénylés elküldésének feltétele az Adatkezelési Tájékoztatóban foglaltak elolvasása és az abban foglaltak elfogadása.")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    self.isValidMinimal = function () {
+        var $form = $("#leadFormMinimal");
+
+        $form.validate();
+
+        if (!$form.valid()) {
+            _manageErrorFields($form);
+            return false;
+        } else {
+            $form.find('div.form-group').each(function () {
+                $(this).removeClass('has-error inner-addon right-addon');
+                $(this).find('.glyphicon').remove();
+            });
+        }
+
+        if (!isValidCheckbox("#check1Minimal", "Az igénylés elküldésének feltétele az Adatkezelési Tájékoztatóban foglaltak elolvasása és az abban foglaltak elfogadása.")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function _managePhoneGlyphicon() {
+        if ($('.phone-number-area').find('span.field-validation-error').length == 2) {
+            var width = $(window).width();
+            if (width <= 480) {
+                $('.phone-number-area').find('.glyphicon').css('top', 66.5);
+            }
+            if (width >= 560) {
+                $('.phone-number-area').find('.glyphicon').css('top', 0);
+            }
+        }
+    }
+
+    function _manageErrorFields($form) {
+        var classes = 'has-error inner-addon right-addon';
+        //var glyphicon = '<i class="glyphicon glyphicon-remove"></i>';
+        var glyphicon = '<span class="fonta"></span>';
+
+
+        $form.find('div.form-group').each(function () {
+            $(this).removeClass('has-error inner-addon right-addon');
+            $(this).find('.glyphicon').remove();
+            if ($(this).find('span.field-validation-error').length > 0) {
+                $(this).addClass(classes);
+                if ($(this).find('span.field-validation-error')[0].id != 'birtdate-validation') {
+                    $(this).append(glyphicon);
+                }
+                _managePhoneGlyphicon();
+            } else if ($(this).find(classes).length == 0) {
+                $(this).removeClass(classes);
+                $(this).find('.glyphicon').remove();
+            }
+        });
+
+        $('.pn-country').css('border-color', '#cccccc');
+    }
+
+    function _getAge() {
+        var today = new Date();
+
+        var date = $('#datepicker').val().replace(/\./g, '/');
+
+        var birthDate = new Date(date);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function isValidCheckbox(checkboxId, text) {
+        if (!$(checkboxId).is(':checked')) {
+            var $checkButton = $(checkboxId).next();
+            var checkSpan = $checkButton.find('.cb-icon-check-empty');
+            $(checkSpan).css('background-position', '-51px 0px');
+            $('html, body').animate({
+                scrollTop: $(checkboxId).parent().offset().top + 'px'
+            }, 'fast');
+            factory.createModal({
+                title: "Figyelmeztetés",
+                message: text,
+                canceltext: "OK"
+            });
+            factory.showModal();
+            return false;
+        }
+
+        return true;
+    }
+
+    self.resetDOM = function () {
+        $('#check1Detailed').checkbox("setChecked", false);
+        $('#check2Detailed').checkbox("setChecked", false);
+        $('#check3Detailed').checkbox("setChecked", false);
+        $('#check4Detailed').checkbox("setChecked", false);
+        $('#check1Minimal').checkbox("setChecked", false);
+        $('#check2Minimal').checkbox("setChecked", false);
+        $('#HasLoanQuestion').checkbox("setChecked", false);
+
+        $('.cb-icon-check-empty').css('background-position', '');
+    }
+
+    return self;
+});

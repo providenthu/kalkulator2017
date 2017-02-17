@@ -1,0 +1,46 @@
+﻿define(['knockout', 'helper'], function (ko, helper) {
+    ko.extenders.currencyExtend = function (target, scale) {
+        var cleanInput = function (value) {
+            if (value || value === 0) {
+                value = value + "";
+                return parseFloat(value.replace(/[^0-9.\-]/g, ''));
+            } else {
+                return null;
+            }
+        };
+
+        var raw = typeof target == "function" ? ko.dependentObservable(target) : ko.observable(target);
+
+        //create a writeable computed observable to intercept writes to our observable
+        var result = ko.computed({
+            read: ko.dependentObservable({
+                read: function () {
+                    return raw();
+                },
+                write: function (value) {
+                    raw(cleanInput(value));
+                }
+            }), //always return the original observables value
+
+            write: function (newValue) {
+                newValue = cleanInput(newValue);
+                target(newValue);
+            }
+        });
+
+        result.formatted = ko.dependentObservable({
+            read: function () {
+                return helper.formatMoney(raw(), true);
+            },
+            write: function (value) {
+                result(cleanInput(value));
+            }
+        }); //always return the original observables value
+
+        //initialize with current value to make sure it is rounded appropriately
+        result(target());
+
+        //return the new computed observable
+        return result;
+    };
+});

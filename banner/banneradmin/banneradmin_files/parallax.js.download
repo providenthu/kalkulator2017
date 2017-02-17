@@ -1,0 +1,4 @@
+﻿define(['jquery', 'knockout', 'modernizr', 'jeasing', 'jisotope',  'jfancybox', 'skrollr', 'jscrollto', 'jlocalscroll', 'stellar', 'jappear'],
+function () {
+    require(['main']);
+});

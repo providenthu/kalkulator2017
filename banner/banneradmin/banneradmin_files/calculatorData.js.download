@@ -1,0 +1,226 @@
+﻿define(["jquery", "knockout", "constants", "helper"], function ($, ko, constants, helper) {
+    var issueValueDataSource;
+    var issueValueDataSourceDesc;
+    var regularRateDataSource;
+    var regularRateMTTicks;
+    var regularRateMTTickPositions;
+    var regularRateHSTicks;
+    var regularRateHSTickPositions;
+    var periodDataSource;
+
+    var sliderOptions;
+
+
+    return {
+        getCalculatorDataAjax: getCalculatorDataAjax,
+        getCalculatorData: getCalculatorData,
+        getSliderOptions: getSliderOptions,
+        calculateBoundValue: calculateBoundValue,
+        updateByIssueValue: updateByIssueValue,
+        getValidPeriods: getValidPeriods,
+        getValidPeriodIndexes: getValidPeriodIndexes,
+        getPeriodIndex: getPeriodIndex
+    }
+
+    ////////
+
+    function getCalculatorDataAjax() {
+        return $.ajax({
+            dataType: 'jsonp',
+            crossDomain: true,
+            type: 'GET',
+            url: constants.calculatorGetUrl
+        }).then(function (data, textStatus, jqXHR) {
+            issueValueDataSource = ko.toJS(data.ViewModelsOrderedByIssueValueAndPeriod);
+            issueValueDataSourceDesc = ko.toJS(data.ViewModelsOrderedByIssueValueAndPeriodDesc);
+            regularRateDataSource = ko.toJS(data.ViewModelsOrderedByRegularRate);
+            periodDataSource = new Array();
+            for (var i = 0; i < 4; i++) {
+                periodDataSource.push({
+                    Frequency: "MO",
+                    Index: i,
+                    Period: 1
+                });
+            }
+            periodDataSource.push(ko.toJS(data.Periods[0]));
+            periodDataSource[4].Index = 4;
+
+            sliderOptions =
+            {
+                minIssueValue : data.IssueValueSliderMinValue,
+                maxIssueValue : data.IssueValueSliderMaxValue,
+                minRegularRate : data.RegularRateSliderMinValue,
+                maxRegularRate: data.RegularRateSliderMaxValue,
+                minRegularRateHS : data.RegularRateSliderHSMinValue,
+                maxRegularRateHS: data.RegularRateSliderHSMaxValue,
+                regularRateMTTicks : ko.toJS(data.RegularRateMTTicks),
+                regularRateMTTickPositions : ko.toJS(data.RegularRateMTTickPositions),
+                regularRateHSTicks : ko.toJS(data.RegularRateHSTicks),
+                regularRateHSTickPositions: ko.toJS(data.RegularRateHSTickPositions),
+                /* Protection Package*/
+                minRegularRatePP: data.RegularRateSliderPPMinValue,
+                maxRegularRatePP: data.RegularRateSliderPPMaxValue,
+                minRegularRateHSPP: data.RegularRateSliderHSPPMinValue,
+                maxRegularRateHSPP: data.RegularRateSliderHSPPMaxValue,
+                regularRateMTPPTicks: ko.toJS(data.RegularRateMTPPTicks),
+                regularRateMTPPTickPositions: ko.toJS(data.RegularRateMTPPTickPositions),
+                regularRateHSPPTicks: ko.toJS(data.RegularRateHSPPTicks),
+                regularRateHSPPTickPositions: ko.toJS(data.RegularRateHSPPTickPositions)
+            };
+            helper.captchaKey(data.CaptchaKey);
+        },
+        function () {
+            $(".spinner-loader").hide();
+            $("#calculator-error-message").show();
+        });
+    }
+
+    function getCalculatorData() {
+        return {
+            issueValueDataSource : issueValueDataSource,
+            issueValueDataSourceDesc : issueValueDataSourceDesc,
+            regularRateDataSource: regularRateDataSource,
+            periodDataSource: periodDataSource,
+        }
+    }
+
+    function getSliderOptions(){
+        return sliderOptions;
+    }
+
+    function calculateBoundValue(valueToChangeType, boundValue, viewModel, direction) {
+        if (valueToChangeType == "issueValue") {
+            updateByReqularRate(viewModel, boundValue, direction);
+        } else if (valueToChangeType == "regularRate") {
+            updateByIssueValue(viewModel, boundValue, direction);
+        } else if (valueToChangeType == "period") {
+            updateByPeriod(viewModel, boundValue.period, boundValue.frequency)
+        }
+    }
+
+    function updateByReqularRate(viewModel, regularRate, direction) {
+        var result = [];
+        if (direction == "inc") {
+            for (var i = 0; i < viewModel.calculatorData.regularRateDataSource.length; i++) {
+                if (viewModel.calculatorData.regularRateDataSource[i].ProductType == viewModel.productType()
+                    && viewModel.calculatorData.regularRateDataSource[i].RegularRate >= regularRate
+                    && ((viewModel.protPackage() && viewModel.calculatorData.regularRateDataSource[i].ProtectionPackFee > 0) ||
+                        (!viewModel.protPackage() && viewModel.calculatorData.regularRateDataSource[i].ProtectionPackFee == 0))) {
+                    result.push(viewModel.calculatorData.regularRateDataSource[i]);
+                    break;
+                }
+            }
+        }
+        else {
+            for (var i = viewModel.calculatorData.regularRateDataSource.length - 1; i >= 0; i--) {
+                if (viewModel.calculatorData.regularRateDataSource[i].ProductType == viewModel.productType()
+                 && viewModel.calculatorData.regularRateDataSource[i].RegularRate <= regularRate
+                 && ((viewModel.protPackage() && viewModel.calculatorData.regularRateDataSource[i].ProtectionPackFee > 0) ||
+                     (!viewModel.protPackage() && viewModel.calculatorData.regularRateDataSource[i].ProtectionPackFee == 0))) {
+                    result.push(viewModel.calculatorData.regularRateDataSource[i]);
+                    break;
+                }
+            }
+        }
+
+        if (result.length === 0) {
+            result.push(viewModel.calculatorData.issueValueDataSource[0]);
+        }
+
+        viewModel.update(result[0].IssueValue, result[0].RegularRate, result[0].FinalRate, result[0].ProductType, result[0].ProtectionPackFee, result[0].Period, result[0].Interest, result[0].TotalServiceFee, result[0].TotalAmountPrice, result[0].AnnualPercentageRate, result[0].MinAmount, result[0].MaxAmount, result[0].Frequency);
+    }
+
+    function updateByIssueValue(viewModel, issueValue, direction, isInit) {
+        var result = [];
+
+        if (direction == "inc") {
+            for (var i = 0; i < viewModel.calculatorData.issueValueDataSource.length; i++) {
+                if (viewModel.calculatorData.issueValueDataSource[i].ProductType == viewModel.productType()
+                    && viewModel.calculatorData.issueValueDataSource[i].IssueValue >= issueValue
+                    && ((viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee > 0) ||
+                        (!viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee == 0))) {
+                    result.push(viewModel.calculatorData.issueValueDataSource[i]);
+                    break;
+                }
+            }
+        }
+        else {
+            for (var i = viewModel.calculatorData.issueValueDataSourceDesc.length - 1; i >= 0; i--) {
+                if (viewModel.calculatorData.issueValueDataSourceDesc[i].ProductType == viewModel.productType()
+                    && viewModel.calculatorData.issueValueDataSourceDesc[i].IssueValue <= issueValue
+                    && ((viewModel.protPackage() && viewModel.calculatorData.issueValueDataSourceDesc[i].ProtectionPackFee > 0) ||
+                        (!viewModel.protPackage() && viewModel.calculatorData.issueValueDataSourceDesc[i].ProtectionPackFee == 0))) {
+                    result.push(viewModel.calculatorData.issueValueDataSourceDesc[i]);
+                    break;
+                }
+            }
+        }
+
+        if (result.length === 0) {
+            result.push(viewModel.calculatorData.issueValueDataSource[0]);
+        }
+
+        viewModel.update(result[0].IssueValue, result[0].RegularRate, result[0].FinalRate, result[0].ProductType, result[0].ProtectionPackFee, result[0].Period, result[0].Interest, result[0].TotalServiceFee, result[0].TotalAmountPrice, result[0].AnnualPercentageRate, result[0].MinAmount, result[0].MaxAmount, result[0].Frequency, isInit);
+    }
+
+    function updateByPeriod(viewModel, period, frequency) {
+        var result = [];
+
+        for (var i = 0; i < viewModel.calculatorData.issueValueDataSource.length; i++) {
+            if (viewModel.calculatorData.issueValueDataSource[i].ProductType == viewModel.productType() &&
+                viewModel.calculatorData.issueValueDataSource[i].IssueValue == viewModel.issueValue() &&
+                viewModel.calculatorData.issueValueDataSource[i].Period == period &&
+                viewModel.calculatorData.issueValueDataSource[i].Frequency == frequency &&
+                ((viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee > 0) ||
+                 (!viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee == 0))) {
+                result.push(viewModel.calculatorData.issueValueDataSource[i]);
+                break;
+            }
+        }
+
+        if (result.length === 0) {
+            result.push(viewModel.calculatorData.issueValueDataSource[0]);
+        }
+
+        viewModel.update(result[0].IssueValue, result[0].RegularRate, result[0].FinalRate, result[0].ProductType, result[0].ProtectionPackFee, result[0].Period, result[0].Interest, result[0].TotalServiceFee, result[0].TotalAmountPrice, result[0].AnnualPercentageRate, result[0].MinAmount, result[0].MaxAmount, result[0].Frequency);
+    }
+
+    function getValidPeriods(viewModel) {
+        var result = [];
+        if (viewModel) {
+            for (var i = 0; i < viewModel.calculatorData.issueValueDataSource.length; i++) {
+                if (viewModel.calculatorData.issueValueDataSource[i].ProductType == viewModel.productType()
+                    && viewModel.calculatorData.issueValueDataSource[i].IssueValue == viewModel.issueValue()
+                    && (!viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee == 0 ||
+                        viewModel.protPackage() && viewModel.calculatorData.issueValueDataSource[i].ProtectionPackFee > 0)) {
+
+                    result.push(viewModel.calculatorData.issueValueDataSource[i]);
+                }
+            }
+        }
+        return result;
+    }
+
+    function getValidPeriodIndexes(viewModel) {
+        var results = [];
+        var validPeriods = getValidPeriods(viewModel);
+        for (var i = 0; i < validPeriods.length; i++) {
+            for (var j = 0; j < getCalculatorData().periodDataSource.length; j++) {
+                if (validPeriods[i].Period == getCalculatorData().periodDataSource[j].Period &&
+                    validPeriods[i].Frequency == getCalculatorData().periodDataSource[j].Frequency) {
+                    results.push(getCalculatorData().periodDataSource[j].Index);
+                }
+            }
+        }
+        return results;
+    }
+
+    function getPeriodIndex(period, frequency) {
+        for (var j = 0; j < getCalculatorData().periodDataSource.length; j++) {
+            if (period == getCalculatorData().periodDataSource[j].Period &&
+                frequency == getCalculatorData().periodDataSource[j].Frequency) {
+                return (getCalculatorData().periodDataSource[j].Index);
+            }
+        }
+    }
+});

@@ -1,0 +1,36 @@
+﻿define(function () {
+    var leadPostUrl = "https://providentonline.hu/api/Lead";
+    var calculatorGetUrl = "https://providentonline.hu/api/Calculator/Maxikolcson";
+
+    var defaultIssueValue = 500000;
+    var defaultMinIssueValue = 50000;
+    var defaultMaxIssueValue = 1000000;
+    var stepIssueValue = 10000;
+
+    var defaultRegularRate = 1000;
+    var defaultMinRegularRate = 500;
+    var defaultMaxRegularRate = 11000;
+    var stepRegularRate = 1;
+    
+    var sessionTimeout = 0;
+
+    var updateSlider = false;
+
+    return {
+        leadPostUrl: leadPostUrl,
+        calculatorGetUrl: calculatorGetUrl,
+
+        defaultIssueValue: defaultIssueValue,
+        defaultMinIssueValue: defaultMinIssueValue,
+        defaultMaxIssueValue: defaultMaxIssueValue,
+        stepIssueValue: stepIssueValue,
+
+        defaultRegularRate : defaultRegularRate,
+        defaultMinRegularRate : defaultMinRegularRate,
+        defaultMaxRegularRate : defaultMaxRegularRate,
+        stepRegularRate: stepRegularRate,
+
+        sessionTimeOut: sessionTimeout,
+        updateSlider: updateSlider
+    }
+});

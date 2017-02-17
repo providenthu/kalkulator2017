@@ -1,0 +1,260 @@
+﻿define(['knockout', 'providentforms', 'constants', 'helper', 'factory'], function (ko, providentforms, constants, helper, factory) {
+    function formViewModel(params, componentInfo) {
+        var hhh = helper.getParameterByName("utm_source");
+        this.siteVersion = "A"
+
+        providentforms.initDOM();
+
+        this.firstName = ko.observable();
+        this.lastName = ko.observable();
+        this.phoneNumber = ko.observable();
+        this.phoneArea = ko.observable();
+        this.phoneCountry = ko.observable('+36');
+        //Detailed
+        this.mothersName = ko.observable();
+        this.birthDate = ko.observable();
+        this.email = ko.observable();
+        this.emailAgain = ko.observable();
+        this.marketingPermission = ko.observable(false);
+
+        //Calculator view model
+        this.calculatorVM = params.vm;
+        this.reset = function () {
+            this.firstName('');
+            this.lastName('');
+            this.phoneNumber('');
+            this.phoneArea('');
+            this.phoneCountry('');
+            this.mothersName('');
+            this.birthDate('');
+            this.email('');
+            this.emailAgain('');
+            this.marketingPermission(false);
+            providentforms.resetDOM();
+        }
+
+        function getUtmParameters() {
+            if (location.search === "") {
+                return "?utm_source=belefer";
+            } else if (helper.getParameterByName("utm_source") === "") {
+                return location.search + "&utm_source=belefer";
+            } else {
+                return location.search;
+            }
+        }
+
+        this.submitDetailed = function (viewmodel, event) {
+            if (providentforms.isValidDetailed()) {
+                $(event.target).attr('disabled', true);
+                var data = {
+                    CalculatorData: {
+                        IssueValue: viewmodel.calculatorVM.issueValue(),
+                        ProductType: viewmodel.calculatorVM.productType(),
+                        Period: viewmodel.calculatorVM.period(),
+                        TotalAmountPrice: viewmodel.calculatorVM.totalAmountPrice(),
+                        RegularRate: viewmodel.calculatorVM.regularRate(),
+                        AnnualPercentageRate: viewmodel.calculatorVM.annualPercentageRate(),
+                        TotalServiceFee: viewmodel.calculatorVM.totalServiceFee(),
+                        Interest: viewmodel.calculatorVM.interest(),
+                        Frequency: viewmodel.calculatorVM.frequency()
+                    },
+                    LeadData: {
+                        FirstName: viewmodel.firstName(),
+                        LastName: viewmodel.lastName(),
+                        PhoneNumber: viewmodel.phoneNumber(),
+                        PhoneArea: viewmodel.phoneArea(),
+                        PhoneCountry: viewmodel.phoneCountry(),
+                        MothersName: viewmodel.mothersName(),
+                        BirthDate: viewmodel.birthDate(),
+                        Email: viewmodel.email()
+                    },
+                    DipData: null,
+                    UtmParameters: getUtmParameters(),//"?utm_source=belefer", //location.search, 
+                    HasCalculatorData: viewmodel.calculatorVM.hasCalculatorData(), 
+                    MarketingPermission: viewmodel.marketingPermission(),
+                    SiteVersion: viewmodel.siteVersion
+                };
+                
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    url: constants.leadPostUrl + '/Detailed',
+                    success: function (data) {
+                        console.log('Lead Post success ág data: ', data);
+                        if (data.Success) {
+                            var hadCalculatorData = viewmodel.calculatorVM.hasCalculatorData();
+
+                            helper.setAnalyticsTransactionId(data.Content, viewmodel, 'transactionComplete', false);
+                            helper.executeBbelements();
+
+                            $('provident-forms').hide(1000);
+                            viewmodel.reset();
+
+                            var id = data.ThankYouPage.PageType === 99 ? 5 : data.ThankYouPage.PageType;
+                            var thankyou = $('#success-message-' + id);
+                            var name = "Ügyfelünk";
+                            if (data.ThankYouPage.LastName) {
+                                name = data.ThankYouPage.LastName;
+                                if (data.ThankYouPage.FirstName)
+                                    name += " " + data.ThankYouPage.FirstName;
+                            } else if (data.ThankYouPage.FirstName) {
+                                name = data.ThankYouPage.FirstName;
+                            }
+                            thankyou.find('.success-page-name').text(name);
+                            thankyou.find('.success-requested-loan').text(helper.formatMoney(data.ThankYouPage.OriginalCalculatedIssueValue));
+                            thankyou.find('.success-requested-loan-container').show();
+                            if (id == 4) {
+                                thankyou.find('.success-maximum-loan').text('200.000 Ft');
+                                //thankyou.find('.success-maximum-loan').text(helper.formatMoney(data.ThankYouPage.OriginalCalculatedIssueValue));
+                            } else {
+                                thankyou.find('.success-maximum-loan').text(helper.formatMoney(data.ThankYouPage.RecommendedIssueValue));
+                            }
+                            
+                            thankyou.find('.requested-loan-summary').show();
+
+                            // show only dip or calculator issuevalue
+                            if (data.ThankYouPage.PageTypeVersion !== "" && data.ThankYouPage.PageTypeVersion !== null) {
+                                if (data.ThankYouPage.PageTypeVersion === "A"){
+                                    thankyou.find('.requested-loan-summary').hide();
+                                    thankyou.find('success-message-2-warning-message').hide();
+                                }
+                                else if (data.ThankYouPage.PageTypeVersion === "B") {
+                                    thankyou.find('.success-requested-loan-container').hide();
+                                }
+                            }
+
+                           
+                            thankyou.find('.success-button-ok').on('click', function () {
+                                thankyou.hide(1000);
+                                $('provident-forms').show(1000);
+                                $('#request-submit').attr('disabled', false);
+                            });
+
+
+                            thankyou.show(1000);
+                            $('html, body').animate({
+                                scrollTop: $('#hiteligenyles').offset().top + 'px'
+                            }, 'fast');
+                        } else if (!data.ValidRequest) {
+                            providentforms.isValidDetailed();
+                            $(event.target).attr('disabled', false);
+                        } else { //success: false
+                            $(event.target).attr('disabled', false);
+                            factory.createModal({
+                                title: "Technikai hiba",
+                                htmlMessage: "<p>Az igénylés közben hiba történt, hiteligényét nem sikerült rögzíteni. Kérjük frissítse az oldalt és próbálja újra!</p>" + 
+                                         "<p>Ha a probléma nem oldódik meg kérjük hívja a 06 40 50 50 11-es telefonszámot, ahol kollégáink segítséget nyújtanak Önnek.</p>" +
+                                         "<p>Igénylését SMS-ben is elküldheti: küldje el a HITEL szót a 06 20 555 50 50-es telefonszámra és visszahívjuk.</p>",
+                                canceltext: "OK"
+                            });
+                            factory.showModal();
+                        }
+                    },
+                    error: function (data) {
+                        console.log('Lead Post error ág data: ', data);
+                    }
+                });
+            }
+        }
+
+        this.submitMinimal = function (viewmodel, event) {
+            if (providentforms.isValidMinimal()) {
+                $(event.target).attr('disabled', true);
+                var data = {
+                    CalculatorData: {
+                        IssueValue: viewmodel.calculatorVM.issueValue(),
+                        ProductType: viewmodel.calculatorVM.productType(),
+                        Period: viewmodel.calculatorVM.period(),
+                        TotalAmountPrice: viewmodel.calculatorVM.totalAmountPrice(),
+                        RegularRate: viewmodel.calculatorVM.regularRate(),
+                        AnnualPercentageRate: viewmodel.calculatorVM.annualPercentageRate(),
+                        TotalServiceFee: viewmodel.calculatorVM.totalServiceFee(),
+                        Interest: viewmodel.calculatorVM.interest(),
+                        Frequency: viewmodel.calculatorVM.frequency()
+                    },
+                    LeadData: {
+                        FirstName: viewmodel.firstName(),
+                        LastName: viewmodel.lastName(),
+                        PhoneNumber: viewmodel.phoneNumber(),
+                        PhoneArea: viewmodel.phoneArea(),
+                        PhoneCountry: viewmodel.phoneCountry()
+                    },
+                    HasCalculatorData: viewmodel.calculatorVM.hasCalculatorData(), 
+                    MarketingPermission: viewmodel.marketingPermission(),
+                    UtmParameters: getUtmParameters(), //?utm_source=belefer", //location.search,
+                    SiteVersion: viewmodel.siteVersion
+                };
+     
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    url: constants.leadPostUrl + '/Minimal',
+                    success: function (data) {
+                        console.log('Lead Post success ág data: ', data);
+                        if (data.Success) {
+
+                            helper.setAnalyticsTransactionId(data.Content, viewmodel, 'customerserviceComplete', true);
+                            helper.executeBbelements();
+
+                            $('provident-forms').hide(1000);
+                            viewmodel.reset();
+
+                            var id = data.ThankYouPage.PageType === 99 ? 5 : data.ThankYouPage.PageType;
+                            var thankyou = $('#success-message-' + id);
+                            var name = "Ügyfelünk";
+                            if (data.ThankYouPage.LastName) {
+                                name = data.ThankYouPage.LastName;
+                                if (data.ThankYouPage.FirstName)
+                                    name += " " + data.ThankYouPage.FirstName;
+                            } else if (data.ThankYouPage.FirstName) {
+                                name = data.ThankYouPage.FirstName;
+                            }
+
+                            thankyou.find('.success-page-name').text(name);
+                            
+                            thankyou.show(1000);
+                            $('html, body').animate({
+                                scrollTop: $('#hiteligenyles').offset().top + 'px'
+                            }, 'fast');
+                            $('.success-button-ok').click(function () {
+                                thankyou.hide(1000);
+                                $('provident-forms').show(1000);
+                                $('#request-minimal-submit').attr('disabled', false);
+                            });
+
+
+                        } else if (data.ValidRequest) {
+                            providentforms.isValidMinimal();
+                            $(event.target).attr('disabled', false);
+                        } else {
+                            $(event.target).attr('disabled', false);
+                            factory.createModal({
+                                title: "Technikai hiba",
+                                htmlMessage: "<p>Az igénylés közben hiba történt, hiteligényét nem sikerült rögzíteni. Kérjük frissítse az oldalt és próbálja újra!</p>" +
+                                         "<p>Ha a probléma nem oldódik meg kérjük hívja a 06 40 50 50 11-es telefonszámot, ahol kollégáink segítséget nyújtanak Önnek.</p>" +
+                                         "<p>Igénylését SMS-ben is elküldheti: küldje el a HITEL szót a 06 20 555 50 50-es telefonszámra és visszahívjuk.</p>",
+                                canceltext: "OK"
+                            });
+                            factory.showModal();
+                        }
+                    },
+                    error: function (data) {
+                        console.log('Lead Post error ág data: ', data);
+                        //if rejected todo
+                        $('provident-forms').hide(1000);
+                        $('#success-message-3').show(1000);
+                        $('html, body').animate({
+                            scrollTop: $('#hiteligenyles').offset().top + 'px'
+                        }, 'fast');
+                    }
+                });
+            }
+        }
+
+        return this;
+    }
+
+    return { createViewModel: formViewModel };
+});

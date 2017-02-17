@@ -1,0 +1,85 @@
+﻿require(
+    ['jquery', 'knockout', 'calculatorData', 'calculatorDataViewModel', 'helper', 'constants', 'factory', 'providentchart', 'init', 'bootstrap-radio', 'parallax', 'slider', 'hsCheckbox', 'ppCheckbox', 'currencyBinding', 'currencyExtend', 'periodBinding', 'periodSlider', 'domReady!'],
+    function (jq, ko, calculatorData, calculatorDataViewModel, helper, constants, factory, providentchart, init) {
+        ko.components.register('provident-calculator', { require: 'components/provident-calculator' });
+        ko.components.register('provident-forms', { require: 'components/provident-forms' });
+        ko.components.register('provident-modal', { require: 'components/provident-modal' });
+        ko.components.register('provident-chartoverlay', { require: 'components/provident-chartoverlay' });
+
+        require(['bootstrap']);
+        
+        //TODO: will be used? 
+        var period = helper.getParameterByName('utm_period');
+        var isInit = false;
+        var defaultIssueValue = helper.getParameterByName("utm_issueValue");
+        if (defaultIssueValue == '') {
+            isInit = true;
+            defaultIssueValue = constants.defaultIssueValue;
+        }
+        var productType = helper.getParameterByName('utm_productType');
+
+        if (productType == '') {
+            productType = 'MT';
+        }
+
+        var protPackage = helper.getParameterByName('utm_protPackage');
+
+        if (protPackage == '') {
+            protPackage = false;
+        }
+
+        var regularRate = constants.defaultRegularRate;
+
+        calculatorData.getCalculatorDataAjax().then(function(){
+            var dataSource = calculatorData.getCalculatorData();
+
+            var sliderOptions = calculatorData.getSliderOptions();
+
+            var minIssueValue = sliderOptions.minIssueValue;
+            var maxIssueValue = sliderOptions.maxIssueValue;
+      
+            var regularRateTicks = [];
+            var regularRateTickPositions = [];
+            var minRegularRate = 0;
+            var maxRegularRate = 0;
+
+            if (productType === "MT") {
+                minRegularRate = protPackage ? sliderOptions.minRegularRatePP : sliderOptions.minRegularRate;
+                maxRegularRate = protPackage ? sliderOptions.maxRegularRatePP : sliderOptions.maxRegularRate;
+                regularRateTicks = protPackage ? sliderOptions.regularRateMTPPTicks : sliderOptions.regularRateMTTicks;
+                regularRateTickPositions = protPackage ? sliderOptions.regularRateMTPPTickPositions : sliderOptions.regularRateMTTickPositions;
+                hsCheckboxState = null;
+            } else {
+                minRegularRate = protPackage ? sliderOptions.minRegularRateHSPP : sliderOptions.minRegularRateHS;
+                maxRegularRate = protPackage ? sliderOptions.maxRegularRateHSPP : sliderOptions.maxRegularRateHS;
+                regularRateTicks = protPackage ? sliderOptions.regularRateHSPPTicks : sliderOptions.regularRateHSTicks;
+                regularRateTickPositions = protPackage ? sliderOptions.regularRateHSPPTickPositions : sliderOptions.regularRateHSTickPositions;
+            }
+
+
+            var issueValueSliderOptions = factory.createSliderOptions(constants.stepIssueValue, minIssueValue, maxIssueValue);
+            var regularRateSliderOptions = factory.createSliderOptionsTicks(constants.stepRegularRate, minRegularRate, maxRegularRate, regularRateTicks, regularRateTickPositions);
+            var periodSliderOptions = factory.createSliderOptions(1, 0, dataSource.periodDataSource.length - 1);
+            var homeServiceCheckboxOptions = factory.createCheckboxOptions();
+            var protPackageCheckboxOptions = factory.createCheckboxOptions();
+
+            var viewModel = new calculatorDataViewModel(minIssueValue, regularRate, productType, protPackage, dataSource, sliderOptions, issueValueSliderOptions, regularRateSliderOptions, homeServiceCheckboxOptions, protPackageCheckboxOptions, periodSliderOptions);
+            init.initApp(viewModel);
+
+            ko.applyBindings(viewModel);
+            setTimeout(function () {
+                viewModel.issueValue(defaultIssueValue);
+                if (period != '') {
+                    viewModel.period(period);
+                }
+                calculatorData.updateByIssueValue(viewModel, viewModel.issueValue(), "inc", isInit); // called with isInit = true
+                var periods = calculatorData.getValidPeriods(viewModel);
+                for (var i = 0; i < periods.length; i++) {
+                    if (periods[i].Period == period) {
+                        calculatorData.calculateBoundValue("period", { period: periods[i].Period, frequency: periods[i].Frequency }, viewModel);
+                        break;
+                    }
+                }
+            }, 1);
+        })
+});

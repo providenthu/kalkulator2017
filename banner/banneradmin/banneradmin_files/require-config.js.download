@@ -1,0 +1,91 @@
+﻿require.config({
+    urlArgs: "v=" + 100, // increase it on every production deploy
+    waitseconds: 90,
+    baseUrl: 'Scripts',
+    paths: {
+        //modules
+        calculatorData: 'modules/calculatorData',
+        constants: 'modules/constants',
+        helper: 'modules/helper',
+        init: 'modules/init',
+        factory: 'modules/factory',
+        parallax: 'modules/parallax',
+        providentchart: 'modules/providentchart',
+        providentforms: 'modules/providentForms',
+        providentCalculator: 'modules/providentCalculator',
+        validator: 'modules/validator',
+        //knockout viewModels
+        calculatorDataViewModel: 'viewModels/calculatorDataViewModel',
+        calculatorToolDataViewModel: 'viewModels/calculatorToolDataViewModel',
+        formViewModel: 'viewModels/formViewModel',
+        modalViewModel: 'viewModels/modalViewModel',
+        chartoverlayViewModel: 'viewModels/chartoverlayViewModel',
+        //customBindingHandlers
+        slider: 'customBindingHandlers/slider',
+        hsCheckbox: 'customBindingHandlers/hsCheckbox',
+        ppCheckbox: 'customBindingHandlers/ppCheckbox',
+        currencyBinding: 'customBindingHandlers/currencyBinding',
+        currencyExtend: 'customBindingHandlers/currencyExtend',
+        periodBinding: 'customBindingHandlers/periodBinding',
+        periodSlider: 'customBindingHandlers/periodSlider',
+        //3rd parties
+        jquery: 'jquery-2.1.4',
+        knockout: 'knockout-3.2.0',
+        chart: 'chart.mod',
+        bootstrap: 'bootstrap',
+        jqueryValidate: 'jquery.validate',
+        jqueryValidateUnobtrusive: 'jquery.validate.unobtrusive',
+        numeric: 'jquery.numeric', 
+        //kendo begin
+        kendo: 'kendo',
+        kendoCultureHU: 'kendo/cultures/kendo.culture.hu-HU.min',
+        //kendo end
+        //parallax begin
+        modernizr: 'parallax/modernizr-2.6.2-respond-1.1.0.min',
+        jeasing: 'parallax/jquery.easing.1.3',
+        jisotope: 'parallax/jquery.isotope.min',
+        jnicescroll: 'parallax/jquery.nicescroll.min',
+        jfancybox: 'parallax/fancybox/jquery.fancybox.pack',
+        skrollr: 'parallax/skrollr.min',
+        jscrollto: 'parallax/jquery.scrollTo-1.4.3.1-min',
+        jlocalscroll: 'parallax/jquery.localscroll-1.2.7-min',
+        stellar: 'parallax/stellar',
+        jappear: 'parallax/jquery.appear',
+        main: 'parallax/main'
+        //parallax end
+
+    },
+    shim: {
+        'bootstrap': {
+            deps: ["jquery"]
+        },
+        'bootstrap-checkbox': {
+            deps: ["bootstrap"]
+        },
+        'bootstrap-radio': {
+            deps: ["bootstrap"]
+        },
+        'jqueryValidateUnobtrusive': {
+            deps: ['jqueryValidate']
+        },
+        'jeasing': {
+            deps: ["jquery"]
+        }, 'jisotope': {
+            deps: ["jquery"]
+        }, 'jnicescroll': {
+            deps: ["jquery"]
+        }, 'jfancybox': {
+            deps: ["jquery"]
+        }, 'skrollr': {
+            deps: ["jquery"]
+        }, 'jscrollto': {
+            deps: ["jquery"]
+        }, 'jlocalscroll': {
+            deps: ["jquery"]
+        }, 'stellar': {
+            deps: ["jquery"]
+        }, 'jappear': {
+            deps: ["jquery"]
+        }
+    }
+});

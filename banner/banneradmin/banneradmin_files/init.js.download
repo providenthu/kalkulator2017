@@ -1,0 +1,66 @@
+﻿define(['jquery', 'factory', 'bootstrap', 'providentchart', 'calculatorDataViewModel', 'knockout', 'helper', 'constants', 'calculatorData'], function (jquery, factory, bootstrap, providentchart, calculatorDataViewModel, ko, helper, constants, calculatorData) {
+    return {
+        initApp: initApp
+    }
+
+    function initApp(vm) {
+
+        //$('#charttab a:last').tab('show');
+
+        if (!(window.console && console.log)) {
+            console = {
+                log: function () { },
+                debug: function () { },
+                info: function () { },
+                warn: function () { },
+                error: function () { }
+            };
+        }
+
+        $(document).ready(function () {
+            helper.setNiceScroll();
+        });
+
+        $(window).resize(helper.setNiceScroll);
+
+        var isXS;
+
+        var detectXs = $('<p class="visible-xs visible-sm"></p>');
+        $('body').append(detectXs);
+        isXS = (detectXs.is(":visible"));
+        if (isXS) {
+            $('a[data-toggle="tab"]').eq(1).tab('show');
+        }
+        detectXs.remove();
+
+        $('[data-toggle="tooltip"]').tooltip({
+            'placement': 'left'
+        });
+
+        $('.tooltip-left').tooltip();
+
+        $('[data-toggle="tooltip-top"]').tooltip({
+            'placement': 'top'
+        });
+
+        $(".request-button-chart").click(function () {
+            $('#formsTab a:first').tab('show');
+            $('#request-datas').show(0);
+        });
+
+        $("#visszahivas-figure").click(function () {
+            $('#formsTab a:last').tab('show');
+        });
+
+
+        constants.updateSlider = true;
+        var period = vm.period();
+        vm.period(period + 1);
+        vm.period(period);
+        if (!isXS) {
+            helper.setNiceScroll();
+        }
+
+        $('#woman').show();
+    }
+});

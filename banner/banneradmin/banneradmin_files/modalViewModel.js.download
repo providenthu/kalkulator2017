@@ -1,0 +1,18 @@
+﻿define(['knockout'], function (ko) {
+    function createModalViewModel(params) {
+        this.title = ko.observable(params.title || "Title");
+        this.message = ko.observable(params.message || "Message");
+        this.okText = ko.observable(params.okText || "OK");
+        this.cancelText = ko.observable(params.cancelText || "Cancel");
+        this.accept = function () {
+            if (typeof (params.callback) === "function") {
+                params.callback();
+            }
+            return;
+        }
+        return this;
+    }
+
+    return { createViewModel: createModalViewModel };
+});
+

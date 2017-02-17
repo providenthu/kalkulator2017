@@ -1,0 +1,3 @@
+﻿define(['knockout', 'formViewModel', 'text!templates/provident-forms.html'], function (ko, formViewModel, htmlString) {
+    return { viewModel: formViewModel, template: htmlString };
+});

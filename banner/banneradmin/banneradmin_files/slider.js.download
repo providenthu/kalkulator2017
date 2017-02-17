@@ -1,0 +1,94 @@
+﻿define(['knockout', 'bootstrap-slider-mod', 'calculatorData'], function (ko, slider, calculatorData) {
+    ko.bindingHandlers.slider = {
+        init: function (element, valueAccessor, allBindings) {
+            var options = allBindings.get('sliderOptions') || {};
+            options.value = parseInt(ko.unwrap(valueAccessor()));
+
+            $(element).slider(options);
+
+            var valueToChangeType = allBindings.get('valueToChangeType');
+
+            //$(element).on('change', function (event, ui) {
+            //    var el = $(element).parent().find('.slider-selection');
+            //    var left = parseFloat(el[0].style.left);
+            //    if (left >= 98) {
+            //        el.css('background-position', '0 100%');
+            //    } else {
+            //        el.css('background-position', '0 0');
+            //    }
+            //});
+
+            $(element).on('slide', function (event, ui) {
+                var direction = "inc";
+                if (event.value < valueAccessor()()) {
+                    direction = "desc";
+                }
+                if (valueToChangeType == "regularRate") {
+                    allBindings.get('calculatorDataViewModel').issueValueOnSlider(event.value);
+                }
+                //valueAccessor()(event.value);
+                //calculatorData.calculateBoundValue(valueToChangeType, parseInt(ko.unwrap(valueAccessor())), allBindings.get('calculatorDataViewModel'), direction);
+            });
+
+            $(element).on('slideStop', function (event, ui) {
+                var direction = "inc";
+                if (event.value < valueAccessor()()) {
+                    direction = "desc";
+                }
+
+                valueAccessor()(event.value);
+                calculatorData.calculateBoundValue(valueToChangeType, parseInt(ko.unwrap(valueAccessor())), allBindings.get('calculatorDataViewModel'), direction);
+            });
+
+            $($('.sep').get(0)).on('click', function () {
+                var slider = $(element).data('slider');
+                slider.setValue(options.min, true, true);
+                slider._trigger('slideStop', options.min);
+            });
+
+            $($('.sep').get(1)).on('click', function () {
+                var slider = $(element).data('slider');
+                slider.setValue(options.max, true, true);
+                slider._trigger('slideStop', options.max);
+            });
+
+
+            var sliderIncId = allBindings.get('incButtonId');
+            $("#" + sliderIncId).on('click', function (event) {
+                event.preventDefault();
+                var incValue = valueAccessor()() + options.step;
+                if(incValue <= options.max){
+                    valueAccessor()(incValue);
+                } else {
+                    valueAccessor()(options.max);
+                }
+                calculatorData.calculateBoundValue(valueToChangeType, parseInt(ko.unwrap(valueAccessor())), allBindings.get('calculatorDataViewModel'), "inc");
+                $('[data-bind^="slider"]').trigger("change");
+            });
+
+            var sliderDescId = allBindings.get('descButtonId');
+            $("#" + sliderDescId).click(function (event) {
+                event.preventDefault();
+                var descValue = valueAccessor()() - options.step;
+
+                if (descValue >= options.min) {
+                    valueAccessor()(descValue);
+                } else {
+                    valueAccessor()(options.min);
+                }
+                calculatorData.calculateBoundValue(valueToChangeType, parseInt(ko.unwrap(valueAccessor())), allBindings.get('calculatorDataViewModel'), "desc");
+                $('[data-bind^="slider"]').trigger("change");
+            });
+
+            //$(element).on('slide', function (event, ui) {
+            //    debugger
+            //    console.log("slidiing")
+            //    valueAccessor()(event.value);
+            //    calculatorData.calculateBoundValue(valueToChangeType, parseInt(ko.unwrap(valueAccessor())), allBindings.get('calculatorDataViewModel'))
+            //});
+        },
+        update: function (element, valueAccessor) {
+            $(element).slider('setValue', parseInt(ko.unwrap(valueAccessor())));
+        }
+    }
+});

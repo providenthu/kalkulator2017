@@ -1,0 +1,3 @@
+﻿define(['knockout', 'modalViewModel', 'text!templates/provident-modal.html'], function (ko, modalViewModel, htmlString) {
+    return { viewModel: modalViewModel, template: htmlString };
+});

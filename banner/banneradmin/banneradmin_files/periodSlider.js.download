@@ -1,0 +1,66 @@
+﻿define(['knockout', 'bootstrap-slider-mod', 'calculatorData', 'factory', 'helper', 'constants'], function (ko, slider, calculatorData, factory, helper, constants) {
+    ko.bindingHandlers.periodSlider = {
+        init: function (element, valueAccessor, allBindings) {
+            var options = allBindings.get('sliderOptions') || {};
+           
+
+            var viewModel = allBindings.get('calculatorDataViewModel');
+            var periods = calculatorData.getValidPeriodIndexes(viewModel);
+            var index = calculatorData.getPeriodIndex(ko.unwrap(valueAccessor()), viewModel.frequency());
+
+            options.value = parseInt(index);
+
+            $(element).slider(options);
+
+           
+
+            $(element).on('slideStop', function (event, ui) {
+                $($("#radioGroup button").get(event.value)).click();
+            });
+
+            $(element).on('slide', function (event, ui) {
+                $($("#radioGroup button").get(event.value)).click();
+            });
+                      
+        },
+        update: function (element, valueAccessor, allBindings) {
+            var viewModel = allBindings.get('calculatorDataViewModel');
+            var validPeriodIndexes = calculatorData.getValidPeriodIndexes(viewModel);
+
+            if (!helper.isEqualArray(validPeriodIndexes, viewModel.periodIndexes) || constants.updateSlider) {
+                viewModel.periodIndexes = validPeriodIndexes;
+                $(element).slider("destroy");
+
+                var options = factory.createSliderOptions(1, validPeriodIndexes[0], validPeriodIndexes[validPeriodIndexes.length - 1]);
+                $(element).slider(options);
+                
+                var radioWidth = $("#loanTerm").width() * 0.2; // currently one radiobutton is 20% of the loanterm div
+                var sliderLength = radioWidth * validPeriodIndexes.length;
+
+                $("#periodSliderContainer .period-slider").css("width", sliderLength == 0 ? radioWidth : sliderLength - radioWidth);
+
+                $("#periodSliderContainer .period-slider").css("left", validPeriodIndexes[0] * radioWidth); 
+
+                $("#periodSliderContainer .min-slider-handle").append('<span id="regularRateForSlider" data-bind="text: regularRateFormatted"></span>');
+
+                ko.applyBindings(viewModel, $("#regularRateForSlider")[0]);
+
+                $(element).on('slideStop', function (event, ui) {
+                    $($("#radioGroup button").get(event.value)).click();
+                });
+
+                $(element).on('slide', function (event, ui) {
+                    $($("#radioGroup button").get(event.value)).click();
+                });
+
+                if (constants.updateSlider) {
+                    constants.updateSlider = false;
+                }
+            }
+
+            var index = calculatorData.getPeriodIndex(ko.unwrap(valueAccessor()), viewModel.frequency());
+
+            $(element).slider('setValue', index);
+        }
+    }
+});

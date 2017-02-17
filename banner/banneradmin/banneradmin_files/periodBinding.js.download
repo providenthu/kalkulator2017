@@ -1,0 +1,111 @@
+﻿define(['knockout', 'helper', 'constants', 'calculatorData'], function (ko, helper, constants, calculatorData) {
+    ko.bindingHandlers.periodBinding = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            $(element).find("input[name='periodGroup']").radio({});
+
+            var viewModel = allBindingsAccessor.get('calculatorDataViewModel');
+
+            $(element).find('input[name="periodGroup"]').on('click', function () {
+                var self = $(this);
+
+                var bondValue = new Object();
+                bondValue.period = self.val();
+                bondValue.frequency = self.attr("data-period-frequency");
+
+                calculatorData.calculateBoundValue("period", bondValue, viewModel);
+            });
+        },
+
+        update: function (element, valueAccessor, allBindings) {
+
+            var viewModel = allBindings.get('calculatorDataViewModel');
+            var periods = calculatorData.getValidPeriods(viewModel);
+
+            _updateDOM($(element).parent(), periods);
+        }
+    };
+
+    function _updateDOM(element, periods) {
+        _enableRadioButtons(element, periods)
+
+        //_handleRadioButtonBorder(element);
+
+        //_handleRadioSeparator(element);
+    }
+
+
+    function _enableRadioButtons(element, periods) {
+
+        if (periods.length < 1) {
+            return;
+        }
+
+        var checked = false;
+
+        $(element).find('input[name="periodGroup"]').each(function (idx, radioBtn) {
+            $(radioBtn).attr('disabled', true);
+            $($(radioBtn).next().children()).attr('disabled', true);
+            $(radioBtn).parent().find(".periodText").addClass("disabled");
+
+            $.each(periods, function (index, calcData) {
+                var period = calcData.Period;
+                if ($(radioBtn).val() == period) {
+                    $(radioBtn).removeAttr('disabled');
+                    $($(radioBtn).next().children()).removeAttr('disabled');
+                    $(radioBtn).parent().find(".periodText").removeClass("disabled");
+                    if (!checked) {
+                        $(radioBtn).prop('checked', true);
+                        $(radioBtn).change();
+                        $(radioBtn).addClass('active');
+                        checked = true;
+                    }
+                    return false;
+                }
+            });
+        });
+    }
+
+    function _handleRadioButtonBorder(element) {
+        $(element).find('input[name="periodGroup"]').each(function (idx, radioBtn) {
+            $(radioBtn).prop('checked', '');
+
+            $($(radioBtn).next().children().children()[1]).removeClass('cb-icon-radio-check-before');
+
+            if (!$($(radioBtn).next().children()).prop('disabled')) {
+                $($(radioBtn).next().children().children()[1]).addClass('cb-icon-radio-check-before');
+            }
+        });
+    }
+
+    function _handleRadioSeparator(element) {
+        var firstEnabledButton = 0;
+        var lastEnabledButton = 0;
+        var foundEnabled = false;
+
+        $(element).find('input[name="periodGroup"]').each(function (idx, period) {
+            if (!foundEnabled) {
+                if (!$(this).prop('disabled')) {
+                    firstEnabledButton = idx;
+                    lastEnabledButton = idx;
+                    foundEnabled = true;
+                }
+            } else {
+                if (!$(this).prop('disabled')) {
+                    lastEnabledButton = idx;
+                }
+            }
+        });
+
+        $(element).find('.checkbox-separator').each(function (idx, separator) {
+            $(separator).removeClass('active');
+        });
+
+        if (firstEnabledButton == lastEnabledButton) {
+            return;
+        }
+
+        for (var i = firstEnabledButton; i < lastEnabledButton; i++) {
+            $($($(element).find('input[name="periodGroup"]')[i]).next()).next().addClass('active');
+        }
+    }
+});

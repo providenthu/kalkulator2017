@@ -1,0 +1,586 @@
+﻿
+#chartandtable {
+    top: 134px;
+}
+
+
+
+.tooltip2 {
+    position: absolute;
+	opacity: 1;
+	display: none;
+}
+
+.interest {
+	top: 30px;
+	left: 1450px;
+}
+		
+.loan {
+	top: 30px;
+	left: 392px;
+    bottom: 0;
+}
+		
+.home {
+	top: 950px;
+	left: 1450px;
+    bottom: 0;
+}
+		
+.thm {
+	top: 950px;
+	left: 33.5em;
+}
+		
+#canvas-holder {
+    width: 100%;
+    /*display: table;*/
+    /*background-color: rgba(255,255,255,0.6);*/
+    background-color: #ffffff;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-bottom-left-radius: 5px;
+    -ms-border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-bottom-right-radius: 5px;
+    -ms-border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    /*padding-top: 20px;
+    padding-bottom: 72px;*/
+    padding: 20px 20px 71px 20px;
+}
+
+#table-holder {
+    position: relative;
+    /*width: 80%;*/
+    height: 439px;
+    font-size: 20px;
+    /*padding: 20px;*/
+    padding: 13px 20px 20px 20px;
+    /*background-color: rgba(255,255,255,0.6);*/
+    background-color: #ffffff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#table-holder .table {
+    margin-bottom: 10px;
+}
+
+#table-holder table tbody {
+    padding: 0 20px;
+}
+
+#table-holder .table > .col-lg-12 {
+    /*border-top: 1px solid rgba(97,97,97,0.1);*/
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#table-holder .table > .col-lg-12:first-child {
+    border-top: 0;
+}
+
+#table-holder label,
+#table-holder label span {
+    font-size: 15px;
+    /*line-height: 50px;*/
+    color: #616161;
+    /*padding: 15px 0 10px 0;*/
+    padding: 8px 0;
+    border: 0;
+}
+
+#table-holder span {
+    /*float: right;*/
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    /*color: #E414A8;*/
+    color: #00ACE9;
+    padding-top: 15px;
+    padding-right: 0;
+}
+
+canvas {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    /*height: 410px !important;
+    width: auto !important;*/
+}
+		
+.coord {
+    position: absolute;
+	top: 30px;
+	left: 30px;
+}
+
+.tooltip-arrow2 {
+    top: 1em!important;
+    border-right-color: #00ACE9!important;
+    border-left-color: #00ACE9!important;
+}
+
+.tooltip-inner2 {
+    max-height: 200px;
+     white-space: normal;
+    overflow: auto;
+    background-color: #00ACE9;
+}
+
+
+#chartandtable label p {
+    margin-right: 20px;
+}
+
+#chartandtable label .question-sign {
+    position: absolute;
+    top: 0px;
+    margin-left: 5px;
+    /*left: 50px;*/
+}
+
+#chartandtable label .question-sign svg {
+    width: 17px;
+    height: 17px;
+}
+
+#chartandtable .nav-tabs {
+    /*border-bottom: 1px solid #00ACE9;*/
+    background-color: #ffffff;
+}
+
+#chartandtable .nav-tabs > li {
+    background-color: transparent;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#chartandtable .nav-tabs > li.active {
+    background-color: #ffffff;
+}
+
+#chartandtable .nav-tabs > li > a {
+    text-decoration: underline;
+    font-size: 18px;
+    line-height: 18px;
+    color: #00ACE9;
+    font-weight: normal;
+    text-align: center;
+    padding: 15px 15px 14px 15px;
+}
+
+#chartandtable .nav-tabs > li.active > a,
+#chartandtable .nav-tabs > li.active > a:focus {
+    background-color: #ffffff;
+    /*border: 1px solid #ffffff;*/
+    border-top: 1px solid #00ACE9;
+    border-left: 1px solid #00ACE9;
+    border-right: 1px solid #00ACE9;
+    color: #616161;
+    text-decoration: none;
+}
+        
+
+
+.canvas-header {
+    /*display: table-row;*/
+    height: 10em;
+    /*width: 80%;*/
+    text-align:center;
+    padding-left: 10%;
+    padding-right: 10%;
+    vertical-align: middle;
+    /*background-color: rgba(255,255,255,0.6);*/
+    background-color: #ffffff;
+}
+
+.canvas-padding {
+    /*display: table-cell;*/
+    display: inline-block;
+    width: 10%!important;
+    /*border: 1px solid black;*/
+}
+
+.canvas-container {
+    /*width: 80%!important;*/
+    /*display: table-cell;*/
+    display: inline-block;
+    text-align: center;
+}
+
+.canvas-header-container {
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+    margin-bottom: 10px;
+    padding: 20px 10px;
+}
+
+.chart-text {
+    -webkit-word-break: break-word;
+    -moz-word-break: break-word;
+    -ms-word-break: break-word;
+    word-break: break-word;
+    float: left;
+    width: 33.33333%;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    top: 50%;
+    -moz-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    -o-transform: translate(0, -50%);
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    display: inline;
+    color: #616161;
+
+}
+    
+
+.canvas-body {
+    display: inline-block;
+    position: relative;
+    /*background-color: rgba(255,255,255,0.6);*/
+    background-color: #ffffff;
+    /*float: left;*/
+    width: 100%;
+    font-size: 13px;
+    line-height: 18px;
+    color: #616161;
+    text-align: center;
+    /*border: 1px solid #000000;*/
+    /*width: 410px;*/
+    height: 320px;
+    margin-bottom: 15px;
+}
+
+.canvas-body .question-sign {
+    position: absolute;
+    right: 0;
+}
+
+.canvas-body svg {
+    width: 17px;
+    height: 17px;
+}
+
+.canvas-body .chart-text-value {
+    font-weight: bold;
+}
+
+.canvas-body #chart-thm .chart-text-value,
+.canvas-body #chart-sum-total .chart-text-value {
+    font-size: 20px;
+    line-height: 22px;
+    color: #00ACE9;
+}
+
+.canvas-body #chart-sum-total .chart-text-title {
+    /*font-size: 12px;
+    line-height: 16px;*/
+}
+
+#chart-thm,
+#chart-interest,
+#chart-loan,
+#chart-home-service,
+#chart-sum-total {
+    position: absolute;
+}
+
+#chart-thm {
+    top: 15px;
+    left: 80px;
+}
+
+#chart-thm .question-sign {
+    top: -1px;
+    right: -5px;
+}
+
+#chart-interest {
+    top: 15px;
+    right: 90px;
+}
+
+#chart-interest .question-sign {
+    top: -1px;
+    right: -13px;
+}
+
+#chart-loan {
+    bottom: 0px;
+    left: 40px;
+}
+
+#chart-loan .question-sign {
+    top: -1px;
+    right: -23px;
+}
+
+#chart-home-service {
+    bottom: 0px;
+    right: 65px;
+}
+
+#chart-home-service .question-sign {
+    top: -1px;
+    right: -23px;
+}
+
+#chart-sum-total {
+    top: 120px;
+    left: 200px;
+    max-width: 115px;
+}
+
+
+
+.chart-info {
+    /*font-size: 150%;*/
+    color: #00ACE9;
+    white-space: pre;
+}
+
+.chart-info:before {
+    content: '\A';
+}
+
+    
+
+
+
+
+.request-button-container-chart {
+    /*padding-left: 15%;
+    padding-right: 15%;*/
+}
+
+.request-button-chart {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.request-button-container-chart .fonta {
+    position: absolute;
+    right: 35px;
+    color: #ffffff !important;
+    padding-top: 0 !important;
+}
+
+.request-button-chart .fonta {
+    /*color: #ffffff !important;
+    right: 95px;
+    padding-top: 0 !important;*/
+}
+
+
+provident-chartoverlay .question-sign {
+    cursor: pointer;
+}
+
+#table-holder .request-button-container-chart {
+    top: 24px;
+}
+
+
+@media (max-width: 1199px) {
+
+    #chart-thm {
+        left: 30px;
+    }
+
+    #chart-interest {
+        right: 40px;
+    }
+
+    #chart-loan {
+        left: 20px;
+    }
+
+    #chart-home-service {
+        right: 35px;
+    }
+
+
+    #chart-sum-total {
+        left: 147px;
+    }
+
+    #table-holder {
+        height: 449px;
+    }
+
+    #table-holder .request-button-container-chart {
+        top: 33px;
+    }
+
+    .request-button-container-chart a {
+        text-align: left;
+        padding-left: 20px;
+
+    }
+
+    .request-button-container-chart .fonta {
+        /*position: relative;*/
+        right: 35px;
+    }
+}
+
+
+@media (max-width: 991px) {
+
+    #chartandtable {
+        top: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    #table-holder {
+        padding: 0 10px;
+        height: auto;
+    }
+
+    #table-holder h1 {
+        margin: 10px 0;
+    }
+
+    #table-holder label {
+        padding: 5px 0;
+        white-space: normal;
+    }
+
+    #table-holder span {
+        padding-top: 5px;
+    }
+
+    .request-button-container-chart a {
+        text-align: center;
+        padding-left: 0;
+    }
+    #chartandtable label .question-sign {
+        top: -10px;
+    }
+
+}
+
+
+@media (max-width: 767px) {
+
+    
+
+    #chartandtable .nav-tabs > li > a {
+        font-size: 13px;
+    }
+
+    #chartandtable .nav-tabs > li.active > a,
+    #chartandtable .nav-tabs > li.active > a:focus {
+        border: 1px solid #ffffff;
+    }
+
+    #table-holder h1 {
+        margin: 10px auto;
+
+    }
+
+    #table-holder .table > .col-lg-12 {
+        /*padding-bottom: 10px;*/
+    }
+
+    #table-holder .table label {
+        font-size: 13px;
+        padding: 5px 0 5px 0;
+    }
+
+    #table-holder .table span:not(.question-sign) {
+        font-size: 15px;
+        text-align: right;
+        padding-left: 0;
+        padding-top: 5px;
+    }
+
+    #table-holder .request-button-container-chart {
+        top: 5px;
+        /*padding-left: 0;
+        padding-right: 0;*/
+    }
+
+    #table-holder .request-button-chart {
+        padding-left: 30px;
+        padding-right: 35px;
+    }
+
+    #table-holder .request-button-container-chart .fonta {
+        right: 30px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    #table-holder h1 {
+        font-size: 20px;
+        margin: 5px auto 0 auto;
+    }
+
+    #table-holder .table label {
+        padding: 5px 20px 5px 0;
+        /*white-space: normal;*/
+    }
+
+    #chartandtable label .question-sign#tapInfoQuestionSign {
+        /*left: 188px;*/
+    }
+}
+
+
+@media (max-width: 440px) {
+    #table-holder .request-button-container-chart .fonta {
+        /*top: 24px;*/
+    }
+
+}
+
+
+@media (max-width: 360px) {
+
+    /*#table-holder .table label {
+        padding: 5px 20px 5px 0;
+    }*/
+
+    /*#table-holder .table span:not(.question-sign) {
+        font-size: 13px;
+    }*/
+
+    #table-holder .request-button-container-chart {
+        padding-left: 0;
+    }
+
+    /*#chartandtable label .question-sign#tapInfoQuestionSign {
+        left: 137px;
+    }*/
+}
+
+
+@media (max-width: 330px) {
+    #table-holder {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+
+    #table-holder .table label {
+        max-width: 185px;
+    }
+
+    #chartandtable label .question-sign#tapInfoQuestionSign {
+        /*left: 137px;*/
+    }
+}

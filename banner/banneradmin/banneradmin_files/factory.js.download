@@ -1,0 +1,101 @@
+﻿define(['knockout', 'helper'], function (ko, helper) {
+
+    return {
+        createSliderOptions: createSliderOptions,
+        createSliderOptionsTicks: createSliderOptionsTicks,
+        createCheckboxOptions: createCheckboxOptions,
+        createModal: createModal,
+        showModal: showModal,
+        hideModal: hideModal
+    }
+
+
+    ///////
+
+    function SliderOptions(step, min, max) {
+        if (step !== undefined) {
+            this.step = step;
+        }
+        if (min !== undefined) {
+            this.min = min;
+        }
+        if (max !== undefined) {
+            this.max = max;
+        }
+        this.orientation = 'horizontal';
+        this.selection = 'after';
+        this.tooltip = 'hide';
+    }
+
+    function createSliderOptions(step, min, max) {
+        return new SliderOptions(step, min, max);
+    }
+
+    function createSliderOptionsTicks(step, min, max, ticks, ticks_positions) {
+        var so = new SliderOptions(step, min, max);
+        so.precision = 4;
+        so.step = 1;
+        so.ticks = ticks;
+        so.ticks_positions = ticks_positions;
+        so.scale = 'ticker';
+        return so;
+    }
+
+    function CheckboxOptions(defaultState) {
+        this.defaultState = defaultState;
+        this.checkedClass = 'cb-icon-check';
+        this.uncheckedClass = 'cb-icon-check-empty';
+    }
+
+    function createCheckboxOptions(defaultState) {
+        return new CheckboxOptions(defaultState);
+    }
+    //title, message, oktext, canceltext, success, cancel
+    function createModal(params) {
+        $('provident-modal').find('.modal-title').text(params.title);
+        if (params.message) {
+            $('provident-modal').find('.modal-body').css('display', 'block');
+            $('provident-modal').find('.modal-body').find('p').text(params.message);
+        } else {
+            $('provident-modal').find('.modal-body').css('display', 'none');
+        }
+        if (!params.message && params.htmlMessage) {
+            $('provident-modal').find('.modal-body').css('display', 'block');
+            $('provident-modal').find('.modal-body').html(params.htmlMessage);
+        }
+        $('#modalSuccess').text(params.oktext);
+        $('#modalSuccess').off('click');
+        if (!params.oktext) {
+            $('#modalSuccess').css('visibility', 'hidden');
+        } else {
+            $('#modalSuccess').css('visibility', 'visible');
+        }
+        $('#modalCancel').text(params.canceltext);
+        if (typeof (params.success) === 'function') {
+            $('#modalSuccess').click(function (e) {
+                params.success();
+                hideModal();
+
+            });
+        }
+
+        if (typeof (params.cancel) === 'function') {
+            $('#modalCancel').click(function () {
+                params.cancel();
+            });
+        }
+
+    }
+
+    function showModal() {
+        $('provident-modal').find('.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
+
+    function hideModal() {
+        $('provident-modal').find('.modal').modal('hide');
+        helper.setNiceScroll();
+    }
+});

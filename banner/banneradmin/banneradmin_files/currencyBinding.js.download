@@ -1,0 +1,38 @@
+﻿define(['knockout', 'helper', 'constants'], function (ko, helper, constants) {
+    ko.bindingHandlers.currencyBinding = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            $(element).keyup(function () {
+                var observable = valueAccessor();
+                var maxLength = constants.dipFieldNumberMaxLength;
+                if ($(element).val().length <= maxLength) {
+                    observable($(element).val());
+                } else {
+                    $(element).val(observable());
+                }
+                //TODO only call once
+                updateFunc(element, valueAccessor);
+            });
+
+            $(element).focus(function () {
+                if($(this).val() === "0"){
+                    $(this).val("");
+                }
+            });
+
+            $(element).blur(function () {
+                if ($(this).val() === "") {
+                    $(this).val("0");
+                }
+            });
+
+        },
+
+        update: updateFunc
+    };
+
+    function updateFunc(element, valueAccessor) {
+        var value = ko.utils.unwrapObservable(valueAccessor());
+        $(element).val(value);
+    }
+
+});

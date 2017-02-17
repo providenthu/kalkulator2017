@@ -1,0 +1,529 @@
+﻿#success-message-1,
+#success-message-2,
+#success-message-3,
+#success-message-4,
+#success-message-5 {
+    width: 100%;
+    display: none;
+    border-radius: 5px;
+    border: 1px solid rgba(0,91,170,0.2);
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 100px;
+    margin-top: 170px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#success-message-1 p,
+#success-message-2 p,
+#success-message-3 p,
+#success-message-4 p,
+#success-message-5 p {
+    /*color: #145bb0;*/
+    color: #616161;
+    font-size: 17px;
+    line-height: 25px;
+    padding-top: 30px;
+}
+
+#success-image-wrapper {
+    color: #ffffff;
+    /*line-height: 90px;*/
+    text-align: center;
+    /*border-radius: 50%;
+    background-color: rgb(193, 201, 0);
+    width: 90px;
+    height: 90px;*/
+    width: 114px;
+    margin: auto;
+    position: relative;
+    bottom: 70px;
+}
+
+/*#success-image-wrapper .fonta {
+    font-size: 54px !important;
+}*/
+
+#success-message-1 h1,
+#success-message-2 h1,
+#success-message-3 h1,
+#success-message-4 h1,
+#success-message-5 h1 {
+    line-height: 48px;
+    /*color: #005baa;*/
+    font-weight: normal;
+    margin: 0;
+}
+
+#success-message-1 h3,
+#success-message-2 h3,
+#success-message-3 h3,
+#success-message-4 h3,
+#success-message-5 h3 {
+    line-height: 48px;
+    color: #005baa;
+    font-weight: normal;
+    margin: 50px 0 0 0;
+}
+
+#success-message-2 h3 + p,
+#success-message-4 h3 + p {
+    padding-top: 0;
+}
+
+#success-message-2 .table,
+#success-message-3 .table,
+#success-message-4 .table {
+    margin-top: 20px;
+}
+
+#success-message-2 .table h3,
+#success-message-3 .table h3 {
+    /*font-size: 20px;*/
+    margin-top: 0;
+}
+
+/*#success-message-2 .table > thead > tr > th,
+#success-message-2 .table > tbody > tr > td,
+#success-message-3 .table > thead > tr > th,
+#success-message-3 .table > tbody > tr > td {
+    border-bottom: 1px solid rgba(97,97,97,0.1);
+    border-top: 0;
+    text-align: left;
+}
+
+#success-message-2 .table > tbody > tr > td,
+#success-message-3 .table > tbody > tr > td {
+    font-size: 15px;
+    line-height: 30px;
+}*/
+
+#success-message-2 .question-sign svg {
+    width: 21px;
+    height: 21px;
+    position: relative;
+    top: 5px;
+}
+
+#success-message-2 .requested-loan-summary, #success-message-4 .requested-loan-summary {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 50px;
+}
+
+#success-message-2 .requested-loan-summary h3, #success-message-4 .requested-loan-summary h3 {
+    font-size: 20px;
+    padding-bottom: 10px;
+}
+
+#success-message-2 .requested-loan-summary p, #success-message-4 .requested-loan-summary p  {
+    border: 1px solid rgba(0,91,170,0.2);
+    border-radius: 2px;
+    text-align: left;
+    color: #ffffff;
+    height: 58px;
+}
+
+#success-message-2 .requested-loan-summary .success-requested-loan-label, #success-message-4 .requested-loan-summary .success-requested-loan-label {
+    text-transform: uppercase;
+    font-size: 16px;
+    /*line-height: 58px;*/
+    background-color: #008337;
+    display: inline-block;
+    position: relative;
+    /*padding-left: 20px;
+    padding-right: 15px;*/
+    padding: 17px 15px 16px 20px;
+    top: -1px;
+    left: -1px;
+}
+
+#success-message-2 .requested-loan-summary .success-requested-loan-label:after, #success-message-4 .requested-loan-summary .success-requested-loan-label:after {
+    left: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(193, 201, 0, 0);
+	border-left-color: #008337;
+	border-width: 29px;
+	margin-top: -29px;
+}
+
+#success-message-2 .requested-loan-summary .success-maximum-loan, #success-message-4 .requested-loan-summary .success-maximum-loan {
+    font-size: 30px;
+    /*line-height: 56px;*/
+    display: inline-block;
+    padding: 17px 15px 16px 20px;
+    color: #00ACE9;
+}
+
+#success-message-2 .requested-loan-summary .success-maximum-loan .currency, #success-message-4 .requested-loan-summary .success-maximum-loan .currency {
+    font-size: 20px;
+    vertical-align: baseline;
+}
+
+
+#success-message-2 .table > .col-lg-12,
+#success-message-3 .table > .col-lg-12,
+#success-message-4 .table > .col-lg-12 {
+    /*border-top: 1px solid rgba(97,97,97,0.1);
+    border-bottom: 1px solid rgba(97,97,97,0.1);*/
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#success-message-3 .table > .col-lg-12,
+#success-message-4 .table > .col-lg-12 {
+    margin-bottom: 40px;
+}
+
+#success-message-2 .table > .col-lg-12:first-of-type {
+    border-bottom: 0;
+}
+
+#success-message-2 .table label,
+#success-message-3 .table label,
+#success-message-4 .table label {
+    font-size: 15px;
+    /*line-height: 50px;*/
+    color: #616161;
+    text-align: left;
+    padding: 10px 0 5px 0;
+    border: 0;
+}
+
+#success-message-2 .table span:not(.question-sign),
+#success-message-3 .table span:not(.question-sign),
+#success-message-4 .table span:not(.question-sign) {
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    color: #C10F81;
+    padding-top: 10px;
+    padding-right: 0;
+}
+
+#success-message-2 p.before-did-you-know,
+#success-message-4 p.before-did-you-know {
+    height: 300px;
+    vertical-align: middle;
+    padding-top: 100px;
+}
+
+#success-message-2 .did-you-know,
+#success-message-4 .did-you-know {
+    background-image: url(../images/provident-bubble.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    /*margin-top: 50px;
+    margin-bottom: 50px;*/
+    background-size: contain;
+    height: 320px;
+    padding-top: 20px;
+    margin-top: 30px;
+    /*padding: 50px 20px 150px 15px;
+    margin-top: 25px;*/
+}
+
+#success-message-2 .did-you-know h3,
+#success-message-4 .did-you-know h3 {
+    margin-top: 0;
+    position: relative;
+    left: 20px;
+}
+
+#success-message-2 .did-you-know h3,
+#success-message-2 .did-you-know a,
+#success-message-4 .did-you-know h3,
+#success-message-4 .did-you-know a {
+    color: #ffffff;
+    /*color: #005baa;*/
+}
+
+
+#success-message-2 .did-you-know p,
+#success-message-4 .did-you-know p {
+    color: #ffffff;
+    text-align: center;
+    line-height: 18px;
+    font-size: 15px;
+    padding-left: 50px;
+    padding-right: 23px;
+}
+
+#success-message-2 .did-you-know a,
+#success-message-4 .did-you-know a {
+    text-decoration: underline;
+}
+
+#success-message-2 .did-you-know img,
+#success-message-4 .did-you-know img {
+    width: 150px;
+}
+
+
+@media (max-width: 1199px) {
+    #success-message-2 .did-you-know,
+    #success-message-4 .did-you-know {
+        /*padding: 50px 35px 175px 35px;
+        padding-top: 50px;*/
+    }
+
+    #success-message-2 .did-you-know p,
+    #success-message-4 .did-you-know p {
+        padding-left: 10px;
+        padding-right: 0;
+        position: relative;
+        left: 20px;
+    }
+}
+
+
+@media (max-width: 991px) {
+    #success-message-2 .success-maximum-loan,
+    #success-message-4 .success-maximum-loan {
+        /*top: 14px;*/
+    }
+
+    #success-message-2 p.before-did-you-know,
+    #success-message-4 p.before-did-you-know {
+        padding-top: 30px;
+        height: auto;
+    }
+
+    #success-message-2 .did-you-know,
+    #success-message-4 .did-you-know {
+        /*padding: 50px 35px 150px 35px;*/
+        background: none;
+        height: auto;
+        padding-top: 30px;
+        margin-top: 0;
+    }
+
+    #success-message-2 .did-you-know p,
+    #success-message-4 .did-you-know p {
+        /*width: 74%;
+        color: #616161;*/
+        color: #00ACE9;
+    }
+
+    #success-message-2 .did-you-know h3,
+    #success-message-2 .did-you-know a,
+    #success-message-4 .did-you-know h3,
+    #success-message-4 .did-you-know a {
+        /*color: #ffffff;*/
+        color: #00ACE9;
+    }
+
+}
+
+
+
+@media (max-width: 767px) {
+    #success-message-1,
+    #success-message-2,
+    #success-message-3,
+    #success-message-4,
+    #success-message-5 {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 20px;
+    }
+
+    #success-message-2 .table > .col-lg-12,
+    #success-message-3 .table > .col-lg-12,
+    #success-message-4 .table > .col-lg-12 {
+        padding-bottom: 10px;
+    }
+
+    #success-message-2 .table label,
+    #success-message-3 .table label,
+    #success-message-4 .table label {
+        /*font-size: 13px;*/
+    }
+
+    #success-message-2 .table span:not(.question-sign),
+    #success-message-3 .table span:not(.question-sign),
+    #success-message-4 .table span:not(.question-sign) {
+        /*font-size: 15px;*/
+        text-align: left;
+        padding-left: 0;
+        padding-top: 0;
+    }
+
+    #success-message-1 .btn-default,
+    #success-message-2 .btn-default,
+    #success-message-3 .btn-default,
+    #success-message-4 .btn-default,
+    #success-message-5 .btn-default {
+        padding-right: 0 !important;
+    }
+
+    #success-message-2 .success-maximum-loan,
+    #success-message-4 .success-maximum-loan {
+        top: 0px;
+    }
+
+    #success-message-2 .requested-loan-summary p,
+    #success-message-4 .requested-loan-summary p {
+        height: 58px;
+    }
+
+    #success-message-2 .requested-loan-summary .success-requested-loan-label,
+    #success-message-4 .requested-loan-summary .success-requested-loan-label {
+        font-size: 13px;
+        /*background-color: #c1c900;*/
+        background-color: #008337;
+        padding: 4px 15px 4px 10px;
+        width: 68%;
+    }
+
+    #success-message-2 .requested-loan-summary .success-requested-loan-label:after,
+    #success-message-4 .requested-loan-summary .success-requested-loan-label:after {
+        left: 100%;
+	    top: 50%;
+	    border-width: 29px;
+	    margin-top: -29px;
+    }
+
+    #success-message-2 .requested-loan-summary .success-maximum-loan,
+    #success-message-4 .requested-loan-summary .success-maximum-loan {
+        font-size: 20px;
+    }
+
+    #success-message-2 .requested-loan-summary .success-maximum-loan .currency,
+    #success-message-4 .requested-loan-summary .success-maximum-loan .currency {
+        font-size: 13px;
+    }
+}
+
+
+
+@media (max-width: 480px) {
+
+    #success-message-1 h1,
+    #success-message-2 h1,
+    #success-message-3 h1,
+    #success-message-4 h1,
+    #success-message-5 h1 {
+        font-size: 20px;
+        line-height: 30px;
+    }
+
+    #success-message-1 p,
+    #success-message-2 p,
+    #success-message-3 p,
+    #success-message-4 p,
+    #success-message-5 p {
+        font-size: 13px;
+        padding-top: 15px;
+    }
+
+    #success-message-1 h3,
+    #success-message-2 h3,
+    #success-message-3 h3,
+    #success-message-4 h3,
+    #success-message-5 h3 {
+        font-size: 15px;
+        line-height: 30px;
+    }
+
+    #success-message-2 p + h3,
+    #success-message-4 p + h3 {
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+
+    #success-image-wrapper {
+        /*line-height: 70px;*/
+        width: 70px;
+        /*height: 70px;*/
+        bottom: 45px;
+    }
+
+    #success-image-wrapper img {
+        width: 70px;
+    }
+
+    /*#success-image-wrapper .fonta {
+        font-size: 40px !important;
+    }*/
+
+    
+    #success-message-2 .table label,
+    #success-message-3 .table label,
+    #success-message-4 .table label {
+        font-size: 13px;
+    }
+
+    #success-message-2 .table span:not(.question-sign),
+    #success-message-3 .table span:not(.question-sign),
+    #success-message-4 .table span:not(.question-sign) {
+        font-size: 15px;
+    }
+
+
+    #success-message-2 .did-you-know h3,
+    #success-message-4 .did-you-know h3 {
+        /*padding-top: 7%;*/
+        font-size: 18px;
+    }    
+}
+
+
+
+
+@media (max-width: 451px) {
+
+    #success-message-2 .requested-loan-summary .success-requested-loan-label,
+    #success-message-4 .requested-loan-summary .success-requested-loan-label {
+        width: 91%;
+    }
+
+}
+
+
+
+@media (max-width: 380px) {
+
+    #success-message-2 .requested-loan-summary .success-requested-loan-label,
+    #success-message-4 .requested-loan-summary .success-requested-loan-label {
+        width: 90%;
+    }
+
+    #success-message-2 .did-you-know,
+    #success-message-4 .did-you-know {
+        /*padding: 0 0 18% 0;*/
+        background: none;
+        padding-bottom: 30px;
+    }
+
+    #success-message-2 .did-you-know h3,
+    #success-message-4 .did-you-know h3 {
+        color: #145bb0;
+        font-size: 18px;
+    }
+
+    #success-message-2 .did-you-know p,
+    #success-message-4 .did-you-know p {
+        font-size: 13px;
+        line-height: 25px;
+        color: #616161;
+        padding-top: 15px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #success-message-2 .did-you-know a,
+    #success-message-4 .did-you-know a {
+        color: #145bb0;
+        text-decoration: none;
+    }
+}

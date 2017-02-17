@@ -1,0 +1,37 @@
+﻿define(['jqueryValidateUnobtrusive', 'date'], function () {
+    $.validator.setDefaults({ ignore: null });
+
+    $.validator.addMethod('mindate', function (v, el, minDate) {
+        if (this.optional(el)) {
+            return true;
+        }
+
+        var date = $(el).val().replace(/\.$/g, '').replace(/\./g, '/');
+
+        var curDate = new Date(date);
+
+        return minDate <= curDate;
+    }, function () {
+        return $.validator.format('Minimum dátum: 1900.01.01');
+    });
+
+    $.validator.addMethod('maxdate', function (v, el, maxDate) {
+        if (this.optional(el)) {
+            return true;
+        }
+
+        var date = $(el).val().replace(/\.$/g, '').replace(/\./g, '/');
+
+        var curDate = new Date(date);
+
+        return maxDate >= curDate;
+    }, 'A maximum dátum a mai nap');
+
+    $.validator.methods.date = function (value, element) {
+        return this.optional(element) || parseDate('yyyy.MM.dd.', value) || parseDate('yyyy.MM.dd', value);
+    }
+
+    function parseDate(format, value) {
+        return Date.isValid(value, format);
+    }
+});

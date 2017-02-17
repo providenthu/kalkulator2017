@@ -1,0 +1,62 @@
+﻿define(['knockout', 'calculatorData', 'bootstrap-checkbox'], function (ko, calculatorData) {
+    ko.bindingHandlers.ppCheckbox = {
+        init: function (element, valueAccessor, allBindings) {
+            var options = allBindings.get('checkboxOptions') || {};
+
+            $(element).checkbox(options);
+
+            var viewModel = allBindings.get('calculatorDataViewModel');
+            var sliderId = "#" + allBindings.get('sliderId');
+
+            if (viewModel.protPackage()) {
+                $(element).checkbox("setChecked", true);
+            }
+
+            $(element).on('change', function () {
+                if (this.checked) {
+                    $('#pp-icon').css('background-position', '0px -32px');
+                    viewModel.protPackage(true);
+                    var isHS = viewModel.productType() == 'HS';
+                    if (isHS) {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRateHSPP, viewModel.sliderOptions.maxRegularRateHSPP,
+                            viewModel.sliderOptions.regularRateHSPPTicks, viewModel.sliderOptions.regularRateHSPPTickPositions);
+                    } else {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRatePP, viewModel.sliderOptions.maxRegularRatePP,
+                            viewModel.sliderOptions.regularRateMTPPTicks, viewModel.sliderOptions.regularRateMTPPTickPositions);
+                    }
+                } else {
+                    $('#pp-icon').css('background-position', '0px 5px');
+                    viewModel.protPackage(false);
+
+                    var isHS = viewModel.productType() == 'HS';
+                    if (isHS) {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRateHS, viewModel.sliderOptions.maxRegularRateHS,
+                            viewModel.sliderOptions.regularRateHSTicks, viewModel.sliderOptions.regularRateHSTickPositions);
+                    } else {
+                        refreshSlider(sliderId, viewModel.sliderOptions.minRegularRate, viewModel.sliderOptions.maxRegularRate,
+                            viewModel.sliderOptions.regularRateMTTicks, viewModel.sliderOptions.regularRateMTTickPositions);
+                    }
+                }
+
+                var boundValue = {
+                    period: viewModel.period(),
+                    frequency: viewModel.frequency()
+                };
+
+                calculatorData.calculateBoundValue("period", boundValue, viewModel);
+                //calculatorData.updateByIssueValue(viewModel, viewModel.issueValue(), "inc");
+            });
+
+
+            function refreshSlider(sliderId, min, max, ticks, ticksPositions) {
+                $(sliderId).slider("setAttribute", "min", min);
+                $(sliderId).slider("setAttribute", "max", max);
+                $(sliderId).slider("setAttribute", "ticks", ticks);
+                $(sliderId).slider("setAttribute", "ticks_positions", ticksPositions);
+                // refresh double value bug workaround
+                $(sliderId).slider("setAttribute", "value", $(sliderId).slider("getValue"));
+                $(sliderId).slider("refresh");
+            }
+        }
+    }
+});

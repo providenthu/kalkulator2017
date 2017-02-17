@@ -1,0 +1,207 @@
+﻿// Main viewmodel class
+define(['knockout', 'helper', 'providentchart'], function (ko, helper, providentchart) {
+    return function calculatorDataViewModel(issueValue, regularRate, productType, protPackage, calculatorData, sliderOptions, issueValueSliderOptions, regularRateSliderOptions, homeServiceCheckboxOptions, protPackageCheckboxOptions, periodSliderOptions) {
+        this.isChartVisible = ko.computed(function () {
+            var result = false;
+            var detectXs = $('<p class="visible-lg visible-md"></p>');
+            $('body').append(detectXs);
+            if (detectXs.is(":visible")) {
+                result = true;
+            }
+            detectXs.remove();
+            return result;
+        });
+        this.isOverlayVisible = ko.observable(false);
+        this.issueValue = ko.observable(issueValue);
+        this.issueValueFormatted = ko.pureComputed(function () {
+            return helper.formatMoney(this.issueValue());
+        }, this);
+        this.issueValueOnSlider = ko.observable(issueValue);
+        this.issueValueOnSliderFormatted = ko.pureComputed(function () {
+            return helper.formatMoney(this.issueValueOnSlider(), true);
+        }, this);
+        this.period = ko.observable();
+        this.productType = ko.observable(productType);
+        this.protPackage = ko.observable(protPackage);
+        this.interest = ko.observable();
+        this.totalServiceFee = ko.observable();
+        this.totalAmountPrice = ko.observable();
+        this.protPackageFee = ko.observable();
+
+        this.regularRate = ko.observable(regularRate);
+        this.annualPercentageRate = ko.observable();
+        this.minAmount = ko.observable();
+        this.maxAmount = ko.observable();
+        this.productTypeCB = ko.computed(function () {
+            if (this.productType() == 'HS') {
+                return true;
+            } else if (this.productType() == 'MT') {
+                return false;
+            }
+        }, this);
+        this.frequency = ko.observable();
+        this.hasCalculatorData = ko.observable(false);
+
+        this.calculatorData = calculatorData;
+        this.sliderOptions = sliderOptions;
+        this.issueValueSliderOptions = issueValueSliderOptions;
+        this.regularRateSliderOptions = regularRateSliderOptions;
+        this.homeServiceCheckboxOptions = homeServiceCheckboxOptions;
+        this.periodSliderOptions = periodSliderOptions;
+        this.periodIndexes = [];
+        this.maxIssueValue = ko.computed(function () {
+            return helper.formatMoney(this.issueValueSliderOptions.max);
+        }, this);
+
+        this.finalRate = ko.observable();
+
+        this.chart;
+        this.chartIsInited = false;
+        
+
+        //chart table 
+        this.totalAmountPriceFormatted = ko.computed(function () {
+            var x = this.totalAmountPrice();
+            if (x === undefined) return;
+            return helper.formatMoney(x);
+        }, this);
+
+        this.totalServiceFeeFormatted = ko.computed(function () {
+            var x = this.totalServiceFee();
+            if (x === undefined) return;
+            return this.productTypeCB ? helper.formatMoney(x) : "0 Ft";
+        }, this);
+
+        this.annualPercentageRateFormatted = ko.computed(function () {
+            if (this.annualPercentageRate() === undefined) return;
+            return this.annualPercentageRate() + "%";
+        }, this);
+
+        this.periodFormatted = ko.computed(function () {
+            if (this.period() === undefined || this.frequency() === undefined) return;
+            return this.period() + (this.frequency() == "WE" ? " hét" : " hónap");
+        }, this);
+
+        this.frequencyFormatted = ko.computed(function () {
+            if (this.frequency() === undefined) return;
+            return this.frequency() == "WE" ? "Heti" : "Havi";
+        }, this);
+
+        this.protPackageFeeFormatted = ko.computed(function () {
+            var x = this.protPackageFee();
+            if (x === undefined) return;
+            return this.protPackage() ? helper.formatMoney(x) : "0 Ft";
+        }, this);
+
+        this.frequencyAlternate = ko.computed(function () {
+            if (this.frequency() === undefined) return;
+            return this.frequency() == "WE" ? "hétre" : "hónapra";
+        }, this);
+
+        this.interestFormatted = ko.computed(function () {
+            var x = this.interest();
+            if (x === undefined) return;
+            return helper.formatMoney(x);
+        }, this);
+
+
+        this.regularRatePeriodFormatted = ko.computed(function () {
+            if (this.regularRate() === undefined || this.period() === undefined || this.frequency() === undefined) return;
+            //return  helper.formatMoney(this.regularRate()) + " / " + this.period() + (this.frequency() == "WE" ? " hét" : " hónap");
+            return helper.formatMoney(this.regularRate());
+        }, this);
+
+        this.regularRatePeriodAlternate = ko.computed(function () {
+            return helper.formatMoney(this.regularRate(), true);
+        }, this);
+
+        this.regularRateFormatted = ko.computed(function () {
+            if (this.regularRate() === undefined) return;
+            return helper.formatMoney(this.regularRate());
+        }, this);
+
+        this.finalRateFormatted = ko.computed(function () {
+            if (this.finalRate() === undefined) return;
+            return helper.formatMoney(this.finalRate());
+        }, this);
+
+        //chart táblázat vége
+
+        this.update = function (issueValue, regularRate, finalRate, productType, protPackageFee, period, interest, totalServiceFee, totalAmountPrice, annualPercentageRate, minAmount, maxAmount, frequency, isInit) {
+            if (issueValue !== null) {
+                this.issueValue(issueValue);
+            }
+            if (regularRate !== null) {
+                this.regularRate(regularRate);
+            }
+            this.productType(productType);
+            this.protPackage(protPackageFee > 0)
+            this.protPackageFee(protPackageFee);
+            this.period(period);
+            this.interest(interest);
+            this.totalServiceFee(totalServiceFee);
+            this.totalAmountPrice(totalAmountPrice);
+            this.annualPercentageRate(annualPercentageRate);
+            this.minAmount(minAmount);
+            this.maxAmount(maxAmount);
+            this.frequency(frequency);
+            this.issueValueOnSlider(issueValue);
+            this.finalRate(finalRate);
+
+            // every update except from app.js
+            if (isInit === undefined || !isInit) {
+                if (!this.hasCalculatorData()) {
+                    this.hasCalculatorData(true);
+                    //this.chart = providentchart.createChart("chart-area", 300, 300);
+                    var overlay = this.isOverlayVisible;
+                    //$(this.chart.chart.canvas).on('drawOverlay', function () {
+                    //    overlay(true);
+                    //});
+                }
+                //this.updateChart();
+            }
+        }
+
+        this.updateChart = function () {
+            //if (this.isChartVisible() && !this.chart) {
+            //    console.log("set chart");
+            //    this.chart = providentchart.createChart("chart-area", 300, 300);
+            //    var overlay = this.isOverlayVisible;
+            //    $(this.chart.chart.canvas).on('drawOverlay', function () {
+            //        overlay(true);
+            //    });
+            //}
+            if (this.isChartVisible()) {
+                if (this.chart && this.chart.segments) {
+                    if (!this.chartIsInited) {
+                        var data = [
+                            {
+                                value: this.interest(),
+                                //color: "#E414A8",
+                                color: "#C10F81",
+                                label: "Kamat"
+                            },
+                            {
+                                value: this.productTypeCB ? this.totalServiceFee() : 0,
+                                //color: "#C1C901",
+                                color: "#ADDA43",
+                                label: "Otthoni szolgáltatás díja"
+                            },
+                            {
+                                value: this.issueValue(),
+                                //color: "#005BAA",
+                                color: "#00ACE9",
+                                label: "Kölcsön összege"
+                            }];
+                        this.chart.initialize(data);
+                        this.chartIsInited = true;
+                    }
+                    this.chart.segments[0].value = this.interest();
+                    this.chart.segments[1].value = this.productTypeCB ? this.totalServiceFee() : 0;
+                    this.chart.segments[2].value = this.issueValue();
+                    this.chart.update(this);
+                }
+            }
+        }
+    };
+});

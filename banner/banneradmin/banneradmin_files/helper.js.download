@@ -1,0 +1,133 @@
+﻿define(['jnicescroll'], function () {
+
+    return {
+        getParameterByName: getParameterByName,
+        formatMoney: formatMoney,
+        setNiceScroll: setNiceScroll,
+        setAnalyticsTransactionId: setAnalyticsTransactionId,
+        isEqualArray: isEqualArray,
+        executeBbelements: executeBbelements,
+        captchaKey: captchaKey
+    }
+
+    ////////
+
+    var captcha;
+
+    function captchaKey(key) {
+        if (key) {
+            captcha = key;
+        } else {
+            return captcha;
+        }
+    }
+
+    // get the specified value from the querystring by name
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    function formatMoney(n, woCurrency) {
+        var currency = !woCurrency ? " Ft" : "";
+        if (n !== undefined && n !== null && n.toString().length > 0) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + currency; //http://stackoverflow.com/a/2901298
+        }
+
+        return "";
+
+        /*
+        return Number(n).toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== '.' && (a.length - i) % 3 === 0 ? ' ' + c : c;
+        });
+        */
+    }
+
+    function executeBbelements() {
+        //var bbactiontext = '';
+        //var bbs = screen, bbn = navigator, bbh; bbh = '&actiontext=' + escape(bbactiontext) + '&ubl=' + bbn.browserLanguage + '&ucc=' + bbn.cpuClass + '&ucd=' + bbs.colorDepth + '&uce=' + bbn.cookieEnabled + '&udx=' + bbs.deviceXDPI + '&udy=' + bbs.deviceYDPI + '&usl=' + bbn.systemLanguage + '&uje=' + bbn.javaEnabled() + '&uah=' + bbs.availHeight + '&uaw=' + bbs.availWidth + '&ubd=' + bbs.bufferDepth + '&uhe=' + bbs.height + '&ulx=' + bbs.logicalXDPI + '&uly=' + bbs.logicalYDPI + '&use=' + bbs.fontSmoothingEnabled + '&uto=' + (new Date()).getTimezoneOffset() + '&uti=' + (new Date()).getTime() + '&uui=' + bbs.updateInterval + '&uul=' + bbn.userLanguage + '&uwi=' + bbs.width + '&href=' + escape(location.href);
+        //document.write("<scr" + "ipt language='JavaScript' type='text/javascript' charset='utf-8' src='" + (location.protocol == 'https:' ? 'https://go.eu.bbelements.com' : 'http://go.cz.bbelements.com') + "/please/showit/0/0/0/0/?typkodu=js&idaction=1&pl_idkampan=162885&pl_idplan=%%__PLAN_ID%%" + bbh + "&bust=" + Math.random() + "'>" + "</scr" + "ipt>");
+    }
+
+    function setNiceScroll() {
+        //hide normal scroll
+        $("body").css("overflow", "hidden");
+
+        if ($("body").getNiceScroll().length <= 0 && $(window).innerWidth() >= 960) {
+            $("body").niceScroll({ zindex: 999, cursorborder: "", cursorborderradius: "2px", cursorcolor: "#00ACE9", cursoropacitymin: .5 });
+        }
+
+        if ($(window).innerWidth() >= 960) {
+            $("body").getNiceScroll().resize();
+        }
+        else {
+            $("body").getNiceScroll().remove();
+            $("body").css("overflow", "auto");
+        }
+    }
+
+    function setAnalyticsTransactionId(transactionId, viewmodel, event, isMinimal) {
+
+        var price = 0;
+
+        if (viewmodel.calculatorVM.hasCalculatorData()) {
+            price = viewmodel.calculatorVM.issueValue();
+
+            if (isNaN(price)) {
+                price = 0;
+            } else {
+                price = Number(viewmodel.calculatorVM.issueValue());
+            }
+        }
+
+        var product = 'Loan Application';
+        if (isMinimal) {
+            product = 'Call-back';
+        }
+
+        dataLayer.push({
+            'transactionId': transactionId,
+            'transactionAffiliation': '',
+            'transactionTotal': price,
+            'transactionTax': 0,
+            'transactionShipping': 0,
+            'transactionProducts': [{
+                'sku': '0',
+                'name': product,
+                'category': product,
+                'price': price,
+                'quantity': 1
+            }],
+            'event': event//'transactionComplete'
+        });
+
+        // ** Google Tag Manager
+
+        _gaq.push(['_setCustomVar', 2, 'transactionid', transactionId, 2]);
+
+        // ** Google Tag Manager
+
+        // ** affiliate codes
+
+        var aff_url = location.protocol == 'https:' ? 'https://tr.affiliate.hu' : 'http://tr.affiliate.hu';
+        var aff_script = document.createElement('script');
+        aff_script.type = 'text/javascript';
+        aff_script.src = aff_url + '/aff_reg_js.php';
+        var aff = document.getElementsByTagName('script')[0];
+        aff.parentNode.insertBefore(aff_script, aff);
+
+        // ** affiliate
+    }
+
+    function isEqualArray(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (var i = 0, len = arr1.length; i < len; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+});
